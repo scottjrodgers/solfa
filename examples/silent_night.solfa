@@ -1,0 +1,87 @@
+; Silent Night
+; Arranged for my family: Soprano, Tenor, Baritone, Bass
+
+(def soprano
+     [o4
+      ; %start-verse
+      [g8. a16 g8 e4.]
+      [g8. a16 g8 e4.]
+      [/d4 d8 \b4.] 
+      [/c4 c8 \g4.] 
+      [a4 a8 /c8. \b16 a8] 
+      [g8. a16 g8 e4 r8] 
+      [a4 a8 /c8. \b16 a8] 
+      [g8. a16 g8 e4 r8] 
+      [/d4 d8 f8. d16 \b8] 
+      [/c4. e4 r8] 
+      [c8. \g16 e8 g8. f16 d8] 
+      (fermata)
+      [c2.]
+     ]
+)
+
+(def tenor
+     [o4
+      [e8. d16 c8 \g4.]
+      [/e8. d16 c8 \g4.]
+      [b4 b8 b4.]
+      [/c4 c8 [\g4 /c8]]
+      [c4 c8 f8. e16 d8]
+      [e8. d16 c8 c4 r8]
+      [c4 c8 f8. e16 d8]
+      [e8. d16 c8 c4 r8]
+      [f4 f8 d8. \b16 /d8]
+      [e4. g4 r8]
+      [e8. c16 \g8 g8. f16 f8]
+      (fermata)      
+      [g2.]
+     ]     
+)
+
+(def baritone
+     [o4 
+      [c8. \b16 g8 e4.]
+      [c8. \b16 g8 e4.]
+      [g4 g8 g4.]
+      [g4 g8 e4 g8]
+      [r8 a8 a8 a8. b16 a8]
+      [/c8. \b16 a8 g4 r8]
+      [a4 a8 a8. b16 a8]
+      [/c8. \b16 a8 g4.]
+      [r8 a8 a8 g8. g16 g8]
+      [g4. /c4 r8]
+      [g4 e8 d8. d16 d8]
+      (fermata)      
+      [e2.]
+     ]
+)
+
+(def bass 
+     [o3
+      [g8. f16 e8 c4.]
+      [g8. f16 e8 c4.]
+      [d4 d8 d4.]
+      [e4 e8 c4 e8]
+      [r8 f8 f8 f8. g16 f8]
+      [e8. f16 e8 c4 r8]
+      [f4 f8 f8. g16 f8]
+      [e8. f16 e8 c4.]
+      [r8 f8 f8 d8. d16 d8]
+      [e4. c4 r8]
+      [e8. d16 c8]
+      [\g8. g16 g8]
+      (fermata)      
+      [/c2.]
+     ]
+)
+
+(def silent-night
+     {soprano
+      tenor
+      baritone
+      base
+     }
+)
+
+(play piano silent-night)
+
