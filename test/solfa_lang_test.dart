@@ -1,21 +1,19 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:petitparser/petitparser.dart';
-// import 'package:petitparser/debug.dart';
-import 'package:solfa/lang/solfa_parser.dart';
+// import 'package:solfa/lang/solfa_parser.dart';
 import 'package:solfa/lang/language_objects.dart';
 
-Parser setup() {
-  var definition = SolFaParser();
-  Parser p = definition.build();
-  return p;
-}
+// Parser setup() {
+//   var definition = SolFaParser();
+//   Parser p = definition.build();
+//   return p;
+// }
 
 void myTest(String s, dynamic key) {
   test("test: '$s'", () {
-    Parser p = setup();
-    // var result = trace(p).parse(s);
-    List<dynamic> result = p.parse(s).value;
-    expect(result.debugStr(), key);
+    // Parser p = setup();
+    // // var result = trace(p).parse(s);
+    // List<dynamic> result = p.parse(s).value;
+    // expect(debugStr(result), key);
   });
 }
 

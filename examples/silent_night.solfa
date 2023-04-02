@@ -76,11 +76,11 @@
 )
 
 (def silent-night
-     {soprano
-      tenor
-      baritone
-      base
-     }
+     &[soprano
+       tenor
+       baritone
+       base
+     ]
 )
 
 (play piano silent-night)

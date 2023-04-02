@@ -1,0 +1,24 @@
+0
+1
+2.1
+a4
+b2.
+ab
+o4
+o+
+o-
+oo
+se4.~2..
+so
+c-4..~2
+; c-4..~2a
+x
+y
+(if (lte? x 1) (then 1 2 3) (else 4))
+"abc"
+{a b c}2
+{a b c} 8
+[c4 d8 e f+4 g2 {f8 e d}4.. r8 %final-note c1]
+[@final-note c4 &[d b] e2]
+;4a
+;(]
