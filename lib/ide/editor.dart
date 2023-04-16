@@ -1,11 +1,15 @@
+// ignore_for_file: avoid_print
+
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:file_picker/file_picker.dart';
 
+import '../midi/midi_interface.dart';
 import 'view.dart';
 import 'editor_controller.dart';
 import 'line_view.dart';
-import '../model/document_provider.dart';
+import 'document_provider.dart';
 
 class Editor extends StatefulWidget {
   const Editor({super.key, this.path = ''});
@@ -27,6 +31,7 @@ class EditorState extends State<Editor> {
 
   @override
   Widget build(BuildContext context) {
+    MidiInterface midi = context.watch<MidiInterface>();
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => doc),
@@ -37,6 +42,19 @@ class EditorState extends State<Editor> {
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
+              TextButton(
+                onPressed: (() {
+                  print("Hit Midi button!");
+                  midi.noteOn(dev: 0, ch: 1, note: 60, vel: 100);
+                  sleep(const Duration(seconds: 1));
+                  midi.noteOff(dev: 0, ch: 1, note: 60, vel: 50);
+                  sleep(const Duration(milliseconds: 200));
+                  midi.noteOn(dev: 1, ch: 1, note: 67, vel: 100);
+                  sleep(const Duration(seconds: 1));
+                  midi.noteOff(dev: 1, ch: 1, note: 67, vel: 50);
+                }),
+                child: const Text('Midi'),
+              ),
               TextButton(
                 onPressed: (() async {
                   // debugPrint("Load Pressed");

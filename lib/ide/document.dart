@@ -42,6 +42,7 @@ class Document {
   List<String> lines = <String>[''];
   Cursor cursor = Cursor();
 
+  // getters
   String get path => docPath;
   String get filename {
     if (docPath.contains('/')) {
@@ -50,8 +51,13 @@ class Document {
     return docPath;
   }
 
+  bool get hasSelection =>
+      (cursor.column != cursor.anchorColumn || cursor.line != cursor.anchorLine);
+
+  // file-IO
   Future<bool> openFile(String path) async {
     lines = <String>[''];
+    cursor = Cursor();
     docPath = path;
     File f = File(docPath);
     await f.openRead().map(utf8.decode).transform(const LineSplitter()).forEach((l) {
@@ -65,13 +71,24 @@ class Document {
   Future<bool> saveFile({String? path}) async {
     File f = File(path ?? docPath);
     String content = '';
-    for (var l in lines) {
-      content += '$l\n';
+
+    int lastLine = 0;
+    for (int i = lines.length - 1; i > 0; i--) {
+      if (lines[i].isNotEmpty) {
+        lastLine = i;
+        break;
+      }
+    }
+
+    for (int j = 0; j <= lastLine; j++) {
+      String line = lines[j];
+      content += '$line\n';
     }
     f.writeAsString(content);
     return true;
   }
 
+  // cursor manipulation
   void _validateCursor(bool keepAnchor) {
     if (cursor.line >= lines.length) {
       cursor.line = lines.length - 1;
@@ -122,6 +139,9 @@ class Document {
 
   void moveCursorDown({int count = 1, bool keepAnchor = false}) {
     cursor.line = cursor.line + count;
+    if (cursor.line >= lines.length) {
+      lines.add("");
+    }
     _validateCursor(keepAnchor);
   }
 
@@ -147,10 +167,7 @@ class Document {
     _validateCursor(keepAnchor);
   }
 
-  void insertNewLine() {
-    deleteSelectedText();
-    insertText('\n');
-  }
+  // text manipulation
 
   /// insertText
   /// param: text - a string with no newline, or a single newline
@@ -195,20 +212,19 @@ class Document {
       return;
     }
 
-    Cursor cur = cursor.normalized();
-    String left = l.substring(0, cur.column);
-    String right = l.substring(min(l.length, cur.column + numberOfCharacters));
-    cursor = cur;
-
     // handle erase entire line
-    if (lines.length > 1 && (left + right).isEmpty) {
+    Cursor cur = cursor.normalized();
+    if (lines.length > 1 && l.isEmpty) {
       lines.removeAt(cur.line);
       moveCursorUp();
       moveCursorToStartOfLine();
       return;
+    } else {
+      String left = l.substring(0, cur.column);
+      String right = l.substring(min(l.length, cur.column + numberOfCharacters));
+      cursor = cur;
+      lines[cursor.line] = left + right;
     }
-
-    lines[cursor.line] = left + right;
   }
 
   void backspace() {
@@ -230,6 +246,14 @@ class Document {
     }
   }
 
+  /// ==================================================================
+  /// Line manipulation
+  /// ==================================================================
+  void insertNewLine() {
+    deleteSelectedText();
+    insertText('\n');
+  }
+
   void deleteLine({int numberOfLines = 1}) {
     for (int i = 0; i < numberOfLines; i++) {
       moveCursorToStartOfLine();
@@ -238,6 +262,9 @@ class Document {
     _validateCursor(false);
   }
 
+  /// ==================================================================
+  /// Selection manipulation
+  /// ==================================================================
   List<String> selectedLines() {
     List<String> res = <String>[];
     Cursor cur = cursor.normalized();
@@ -256,7 +283,11 @@ class Document {
   }
 
   String selectedText() {
-    return selectedLines().join('\n');
+    String selection = selectedLines().join('\n');
+    if (cursor.anchorColumn == lines[cursor.anchorLine].length) {
+      return "$selection\n";
+    }
+    return selection;
   }
 
   void deleteSelectedText() {

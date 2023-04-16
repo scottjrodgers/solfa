@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../model/document_provider.dart';
+import 'document_provider.dart';
 import 'line_view.dart';
 
 class ViewLine extends StatelessWidget {

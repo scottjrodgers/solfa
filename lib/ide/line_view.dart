@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:collection';
 
-import '../model/document.dart';
+import 'document.dart';
 
 double fontSize = 18;
 double gutterFontSize = 16;
@@ -16,6 +16,7 @@ Size getTextExtents(String text, TextStyle style) {
 String fontFamily = "DejaVuSansMono";
 Color foreground = const Color(0xfff8f8f2);
 Color background = const Color(0xff272822);
+// Color background = const Color(0xff404040);
 Color selection = const Color(0xff808080);
 Color cursor = const Color(0xfff02020);
 Color comment = const Color(0xff88846f);

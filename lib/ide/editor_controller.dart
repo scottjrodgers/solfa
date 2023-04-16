@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/rendering.dart';
@@ -5,8 +7,9 @@ import 'package:provider/provider.dart';
 import 'package:clipboard/clipboard.dart';
 import './line_view.dart';
 import './lisp_formatter.dart';
-import '../model/document_provider.dart';
-import '../model/document.dart';
+import './document_provider.dart';
+import './document.dart';
+import '../lang/solfa_interpreter.dart';
 
 class EditorController extends StatefulWidget {
   final Widget child;
@@ -19,6 +22,7 @@ class EditorController extends StatefulWidget {
 class EditControllerState extends State<EditorController> {
   late FocusNode focusNode;
   late KeyNamer keyNamer;
+  final SFInterpreter solfa = SFInterpreter();
 
   @override
   void initState() {
@@ -41,16 +45,7 @@ class EditControllerState extends State<EditorController> {
 
     DocumentProvider doc = Provider.of<DocumentProvider>(context);
     Document d = doc.doc;
-    // LispFormatter lf = LispFormatter(doc: d);
-    // for (int i = 0; i < d.lines.length; i++) {
-    //   int indent = lf.indent(line: i);
-    //   String s = d.lines[i].trimLeft();
-    //   for (int i = 0; i < indent; i++) {
-    //     s = " $s";
-    //   }
-    //   // debugPrint("${d.lines[i]}   -- indent: $indent");
-    //   debugPrint("$s   - indent: $indent");
-    // }
+
     return GestureDetector(
       child: Focus(
           focusNode: focusNode,
@@ -78,6 +73,57 @@ class EditControllerState extends State<EditorController> {
         doc.touch();
       },
     );
+  }
+
+  LineBounds identifyCodeBlock(Document d) {
+    LineBounds endpoints = LineBounds();
+    int cursorLine = d.cursor.line;
+    List<NestingLevel> blocks = [];
+
+    for (int lineNum = 0; lineNum < d.lines.length; lineNum++) {
+      String line = d.lines[lineNum];
+      for (int col = 0; col < line.length; col++) {
+        String ch = line[col];
+        if (['(', '[', '{'].contains(ch)) {
+          if (blocks.isEmpty) {
+            endpoints.start = lineNum;
+          }
+          blocks.add(NestingLevel(ch, lineNum));
+        } else if (blocks.isNotEmpty) {
+          if (blocks.last.close == ch) {
+            if (blocks.length == 1) {
+              endpoints.end = lineNum;
+              if (endpoints.hasWithin(cursorLine)) {
+                return endpoints;
+              }
+            }
+            blocks.removeLast();
+          }
+        }
+        // print(
+        //     "($lineNum,$col) - '$ch' endpoints: [${endpoints.start}, ${endpoints.end}]  blocks.length: ${blocks.length}");
+      }
+      if (lineNum == cursorLine && blocks.isEmpty) {
+        return LineBounds();
+      }
+    }
+    return LineBounds();
+  }
+
+  void manipulateFullLine(Document d, void Function() closure) {
+    assert(d.cursor.column == d.cursor.anchorColumn);
+    assert(d.cursor.line == d.cursor.anchorLine);
+    int curColumn = d.cursor.column;
+    int curLine = d.cursor.line;
+    d.cursor.column = 0;
+    d.cursor.anchorColumn = d.lines[d.cursor.line].length;
+
+    closure();
+
+    d.cursor.column = curColumn;
+    d.cursor.anchorColumn = curColumn;
+    d.cursor.line = curLine;
+    d.cursor.anchorLine = curLine;
   }
 
   void handleKey(String key, DocumentProvider doc) {
@@ -120,6 +166,17 @@ class EditControllerState extends State<EditorController> {
           d.deleteSelectedText();
           d.insertNewLine();
           break;
+        case 'shift-enter':
+          LineBounds bounds = identifyCodeBlock(d);
+          if (bounds.isNotEmpty) {
+            String script = "";
+            for (int i = bounds.start; i <= bounds.end; i++) {
+              print("exec: ${d.lines[i]}");
+              script = "$script ${d.lines[i]}";
+            }
+            solfa.evalString(script);
+          }
+          break;
         case 'tab':
           // todo: need to handle tab special
           int line = d.cursor.line;
@@ -149,11 +206,22 @@ class EditControllerState extends State<EditorController> {
           d.saveFile();
           break;
         case 'cmd-c':
-          FlutterClipboard.copy(d.selectedText());
+          if (d.hasSelection) {
+            FlutterClipboard.copy(d.selectedText());
+          } else {
+            manipulateFullLine(d, () => FlutterClipboard.copy(d.selectedText()));
+          }
           break;
         case 'cmd-x':
-          FlutterClipboard.copy(d.selectedText());
-          d.deleteSelectedText();
+          if (d.hasSelection) {
+            FlutterClipboard.copy(d.selectedText());
+            d.deleteSelectedText();
+          } else {
+            manipulateFullLine(d, () {
+              FlutterClipboard.copy(d.selectedText());
+              d.deleteSelectedText();
+            });
+          }
           break;
         case 'cmd-v':
           FlutterClipboard.paste().then((value) {
@@ -293,7 +361,7 @@ class KeyNamer {
     if (shift) {
       keyName = 'shift-$keyName';
     }
-    debugPrint("Key Pressed: '$keyName'");
+    // debugPrint("Key Pressed: '$keyName'");
     return keyName;
   }
 }
@@ -363,4 +431,32 @@ void findRenderParagraphs(RenderObject? obj, List<RenderParagraph> res) {
   obj?.visitChildren((child) {
     findRenderParagraphs(child, res);
   });
+}
+
+class LineBounds {
+  int start = -1;
+  int end = -1;
+
+  bool get isNotEmpty => start >= 0 && end >= 0;
+  bool hasWithin(int line) => line >= start && line <= end;
+}
+
+class NestingLevel {
+  int line;
+  String open;
+
+  NestingLevel(this.open, this.line);
+
+  String get close {
+    switch (open) {
+      case "(":
+        return ")";
+      case "[":
+        return "]";
+      case "{":
+        return "}";
+    }
+
+    return "";
+  }
 }

@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import '../model/document.dart';
+import 'document.dart';
 
 class DocumentProvider extends ChangeNotifier {
   Document doc = Document();

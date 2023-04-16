@@ -3,3 +3,5 @@
           1
           (mult factor
                 (fact (dec factor)))))
+
+(fact 5)

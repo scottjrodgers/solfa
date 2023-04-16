@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:solfa/model/document.dart';
+import 'package:solfa/ide/document.dart';
 
 void main() {
   Document initSimple() {

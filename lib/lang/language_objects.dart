@@ -17,28 +17,28 @@ class SFBase {
 }
 
 class SFSequence extends SFBase {
-  final List<dynamic> _elements = [];
+  final List<dynamic> elements = [];
 
   SFSequence({super.line, super.column});
 
   SFSequence.withContent(List<dynamic> input, {super.line, super.column}) {
     for (dynamic x in input) {
       if (x != null) {
-        _elements.add(x);
+        elements.add(x);
       }
     }
   }
 
   void add(dynamic x) {
-    _elements.add(x);
+    elements.add(x);
   }
 
-  int get size => _elements.length;
+  int get size => elements.length;
 
-  dynamic get first => _elements[0];
+  dynamic get first => elements[0];
   SFSequence get rest {
-    if (_elements.length > 1) {
-      return SFSequence.withContent(_elements.sublist(1));
+    if (elements.length > 1) {
+      return SFSequence.withContent(elements.sublist(1));
     } else {
       return SFSequence();
     }
@@ -48,7 +48,7 @@ class SFSequence extends SFBase {
   String dump() {
     String out = "seq[";
     bool first = true;
-    for (var e in _elements) {
+    for (var e in elements) {
       if (first) {
         out = "$out${debugStr(e)}";
       } else {
@@ -68,7 +68,7 @@ class SFSquash extends SFSequence {
   String dump() {
     String out = "{";
     bool first = true;
-    for (var e in _elements) {
+    for (var e in elements) {
       if (first) {
         out = "$out${debugStr(e)}";
       } else {
@@ -94,7 +94,7 @@ class SFList extends SFSequence {
   String dump() {
     String out = "expr(";
     bool first = true;
-    for (var e in _elements) {
+    for (var e in elements) {
       if (first) {
         out = "$out${debugStr(e)}";
       } else {
@@ -107,7 +107,7 @@ class SFList extends SFSequence {
 }
 
 class SFConcurrent extends SFSequence {
-  // final List<dynamic> _elements = [];
+  // final List<dynamic> elements = [];
 
   SFConcurrent({super.line, super.column});
 
@@ -115,7 +115,7 @@ class SFConcurrent extends SFSequence {
   String dump() {
     String out = "&[";
     bool first = true;
-    for (var e in _elements) {
+    for (var e in elements) {
       if (first) {
         out = "$out${debugStr(e)}";
       } else {
@@ -132,6 +132,8 @@ class SFSymbol extends SFBase {
 
   SFSymbol(this._name, {super.line, super.column});
 
+  String get name => _name;
+
   @override
   String toString() => _name;
 
@@ -139,35 +141,36 @@ class SFSymbol extends SFBase {
   String dump() => "sym:$_name";
 }
 
-class SFNote extends SFBase {
+abstract class SFBaseNote extends SFBase {
   final String note;
   final String? duration;
-  SFNote(this.note, this.duration, {super.line, super.column});
+  SFBaseNote(this.note, this.duration, {super.line, super.column});
+}
+
+class SFNote extends SFBaseNote {
+  SFNote(super.note, super.duration, {super.line, super.column});
 
   @override
   String dump() => "note($note:$duration)";
 }
 
-class SFStepNote extends SFBase {
-  final String note;
-  final String? duration;
-  SFStepNote(this.note, this.duration, {super.line, super.column});
+class SFStepNote extends SFBaseNote {
+  SFStepNote(super.note, super.duration, {super.line, super.column});
 
   @override
   String dump() => "step($note:$duration)";
 }
 
-class SFSolfegeNote extends SFBase {
-  final String note;
-  final String? duration;
-  SFSolfegeNote(this.note, this.duration, {super.line, super.column});
+class SFSolfegeNote extends SFBaseNote {
+  SFSolfegeNote(super.note, super.duration, {super.line, super.column});
 
   @override
   String dump() => "solf($note:$duration)";
 }
 
 class SFRest extends SFBase {
-  final String? duration;
+  String? duration;
+
   SFRest(this.duration, {super.line, super.column});
 
   @override
@@ -193,7 +196,7 @@ class SFOctaveChange extends SFBase {
 
 class SFMarker extends SFBase {
   String name;
-  SFMarker(this.name);
+  SFMarker(this.name, {super.line, super.column});
 
   @override
   String dump() => "<%$name>";
@@ -201,13 +204,127 @@ class SFMarker extends SFBase {
 
 class SFReference extends SFBase {
   String name;
-  SFReference(this.name);
+  SFReference(this.name, {super.line, super.column});
 
   @override
   String dump() => "<@$name>";
 }
 
-abstract class SFFunc extends SFBase {}
+class SFError extends SFBase {
+  String message;
+  SFError(this.message, {super.line, super.column});
+
+  @override
+  String toString() => "$message ($line:$column)";
+
+  @override
+  dump() => toString();
+}
+
+class Environment {
+  final Map<String, dynamic> _scope = {};
+  Environment? parent;
+
+  Environment();
+
+  Environment extend() {
+    Environment newEnv = Environment();
+    newEnv.parent = this;
+    return newEnv;
+  }
+
+  /// finds and returns the value associated with the given key (name)
+  dynamic get(String key) {
+    if (_scope.containsKey(key)) {
+      return _scope[key];
+    } else if (parent != null) {
+      return parent!.get(key);
+    } else {
+      return null;
+    }
+  }
+
+  /// assigns a value to a name (key) in the local scope (this environment)
+  void def(String key, SFBase value) {
+    _scope[key] = value;
+  }
+
+  /// set
+  /// - Sets the value of a key in the first environment it's found in.
+  /// - If not found, it's created in the local scope
+  /// key: String - the name of the value to set
+  /// value: The value to be stored
+  void set(String key, dynamic value) {
+    Environment e = this;
+    while (e.parent != null) {
+      if (e._scope.containsKey(key)) {
+        e.def(key, value);
+        return;
+      }
+      e = e.parent!;
+    }
+    def(key, value);
+  }
+
+  /// setBang
+  /// - Sets the value of a key in the first environment it's found in.
+  /// - If not found, it's created in the global scope
+  /// key: String - the name of the value to set
+  /// value: The value to be stored
+  void setBang(String key, dynamic value) {
+    Environment e = this;
+    while (e.parent != null) {
+      if (e._scope.containsKey(key)) {
+        e.def(key, value);
+        return;
+      }
+      e = e.parent!;
+    }
+    e.def(key, value);
+  }
+}
+
+abstract class SFBaseFunc extends SFBase {
+  // Environment env;
+  SFBaseFunc({super.line, super.column});
+  // SFBaseFunc({required this.env, super.line, super.column});
+}
+
+class SFFunc extends SFBaseFunc {
+  String name;
+  final List<dynamic> forms;
+  final List<String> parameters;
+
+  SFFunc(
+    this.parameters,
+    this.forms, {
+    this.name = "Unnamed-Function",
+    // required super.env,
+    super.line,
+    super.column,
+  });
+
+  @override
+  String toString() => "<<$name>>";
+
+  @override
+  dump() => toString();
+}
+
+typedef BuiltInFunction = dynamic Function(List<dynamic> args, Environment env);
+
+class SFBuiltIn extends SFBaseFunc {
+  String name;
+  BuiltInFunction func;
+
+  SFBuiltIn(this.name, this.func);
+
+  @override
+  String toString() => "<<Built-In:$name>>";
+
+  @override
+  dump() => toString();
+}
 
 //--------------------------------------------------------------------------------------
 
@@ -222,6 +339,9 @@ String debugStr(dynamic obj) {
       return '"$obj"';
     case "List<dynamic>":
       return _dumpList(obj);
+  }
+  if (obj == null) {
+    return "<nil>";
   }
   return obj.dump();
 }
@@ -260,10 +380,6 @@ final Set<String> solfegeSyllables = {
   'ti'
 };
 
-void error(String msg, String token) {
-  print("ERROR: $msg - ($token)");
-}
-
 SFBase? buildSymbolLike(String sym, int? line, int? column) {
   int len = sym.length;
 
@@ -279,6 +395,42 @@ SFBase? buildSymbolLike(String sym, int? line, int? column) {
   RegExpMatch? octaveMatch = octaveRE.firstMatch(sym);
   RegExpMatch? markerMatch = markerRE.firstMatch(sym);
 
+  // octave token
+  if (octaveMatch != null) {
+    if (octaveMatch.start == 0 && octaveMatch.end == len) {
+      String c2 = sym[1];
+      if (c2 == '+') {
+        return SFOctaveChange(true, line: line, column: column);
+      } else if (c2 == '-') {
+        return SFOctaveChange(false, line: line, column: column);
+      } else {
+        int oct = int.parse(c2);
+        return SFOctave(oct, line: line, column: column);
+      }
+    } else {
+      return SFError("Bad octave operation ($sym)", line: line, column: column);
+    }
+  }
+
+  // marker token
+  if (markerMatch != null) {
+    if (markerMatch.start == 0 && markerMatch.end == len) {
+      if (sym[0] == '%') {
+        return SFMarker(sym.substring(1), line: line, column: column);
+      } else {
+        assert(sym[0] == '@');
+        return SFReference(sym.substring(1), line: line, column: column);
+      }
+    } else {
+      return SFError("Improper marker definition / reference ($sym)", line: line, column: column);
+    }
+  }
+  if (sym[0] == '@') {
+    return SFError("Improper marker reference ($sym)", line: line, column: column);
+  } else if (sym[0] == '%') {
+    return SFError("Improper marker definition ($sym)", line: line, column: column);
+  }
+
   // solfege
   if (solfegeMatch != null) {
     if (solfegeSyllables.contains(sym.substring(0, 2))) {
@@ -288,13 +440,12 @@ SFBase? buildSymbolLike(String sym, int? line, int? column) {
           String d = sym.substring(durMatch.start, durMatch.end);
           return SFSolfegeNote(s, d);
         } else {
-          error("Bad solfege note with duration", sym);
-          return null;
+          return SFError("Bad solfege note with duration ($sym)", line: line, column: column);
         }
       } else {
         if (solfegeMatch.start == 0 && solfegeMatch.end == len) {
           String s = sym.substring(solfegeMatch.start, solfegeMatch.end);
-          return SFSolfegeNote(s, null);
+          return SFSolfegeNote(s, null, line: line, column: column);
         }
       }
     }
@@ -307,64 +458,24 @@ SFBase? buildSymbolLike(String sym, int? line, int? column) {
         String n = sym.substring(toneMatch.start, toneMatch.end);
         String d = sym.substring(durMatch.start, durMatch.end);
         if (n == 'r') {
-          return SFRest(d);
+          return SFRest(d, line: line, column: column);
         } else {
-          return SFNote(n, d);
+          return SFNote(n, d, line: line, column: column);
         }
       } else {
-        error("Bad note with duration", sym);
-        return null;
+        return SFError("Bad note with duration ($sym)", line: line, column: column);
       }
     } else {
       if (toneMatch.start == 0 && toneMatch.end == len) {
         String n = sym.substring(toneMatch.start, toneMatch.end);
         if (n == 'r') {
-          return SFRest(null);
+          return SFRest(null, line: line, column: column);
         } else {
-          return SFNote(n, null);
+          return SFNote(n, null, line: line, column: column);
         }
       }
     }
   }
 
-  // octave token
-  if (octaveMatch != null) {
-    if (octaveMatch.start == 0 && octaveMatch.end == len) {
-      String c2 = sym[1];
-      if (c2 == '+') {
-        return SFOctaveChange(true);
-      } else if (c2 == '-') {
-        return SFOctaveChange(false);
-      } else {
-        int oct = int.parse(c2);
-        return SFOctave(oct);
-      }
-    } else {
-      error("Bad octave operation", sym);
-      return null;
-    }
-  }
-
-  // marker token
-  if (markerMatch != null) {
-    if (markerMatch.start == 0 && markerMatch.end == len) {
-      if (sym[0] == '%') {
-        return SFMarker(sym.substring(1));
-      } else {
-        assert(sym[0] == '@');
-        return SFReference(sym.substring(1));
-      }
-    } else {
-      error("Improper marker definition / reference", sym);
-    }
-  }
-  if (sym[0] == '@') {
-    error("Improper marker reference", sym);
-    return null;
-  } else if (sym[0] == '%') {
-    error("Improper marker definition", sym);
-    return null;
-  }
-
-  return SFSymbol(sym);
+  return SFSymbol(sym, line: line, column: column);
 }

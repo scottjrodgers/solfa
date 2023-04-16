@@ -1,0 +1,2 @@
+(play "piano" [a4 b c )
+(if @7893a !foo?)

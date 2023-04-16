@@ -1,23 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'ide/editor.dart';
 import 'ide/line_view.dart';
-
-const sample = '''
-(def fact
-  (fn [x]
-    (if
-      (> x 0)
-      (* x
-        (fact
-          (- x 1)
-        )
-      )
-      1
-    )
-  )
-)
-(fact 5)
-''';
+import 'ide/midi_widget.dart';
+import 'midi/midi_interface.dart';
 
 void main() async {
   ThemeData themeData = ThemeData(
@@ -29,8 +15,15 @@ void main() async {
   return runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
     theme: themeData,
-    home: const Scaffold(
-      body: Editor(),
+    home: Scaffold(
+      body: Provider(
+        create: (_) => MidiInterface(),
+        lazy: false,
+        child: Row(children: const [
+          Expanded(child: Editor()),
+          MidiWidget(),
+        ]),
+      ),
     ),
   ));
 }

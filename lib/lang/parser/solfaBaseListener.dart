@@ -1,10 +1,9 @@
 // Generated from solfa.g4 by ANTLR 4.12.0
-// ignore_for_file: unused_import, unused_local_variable, prefer_single_quotes
+// ignore_for_file: unused_import, unused_local_variable, prefer_single_quotes, file_names, camel_case_types, non_constant_identifier_names
 import 'package:antlr4/antlr4.dart';
 
 import 'solfaParser.dart';
 import 'solfaListener.dart';
-
 
 /// This class provides an empty implementation of [solfaListener],
 /// which can be extended to create a listener which only needs to handle

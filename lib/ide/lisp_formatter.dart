@@ -1,4 +1,4 @@
-import '../model/document.dart';
+import 'document.dart';
 
 class IndentUnit {
   int _open = 0;

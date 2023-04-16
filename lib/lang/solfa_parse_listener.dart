@@ -1,4 +1,8 @@
-// import 'package:antlr4/antlr4.dart';
+// ignore_for_file: non_constant_identifier_names, avoid_print
+
+import 'package:antlr4/antlr4.dart';
+// ignore: implementation_imports
+import 'package:antlr4/src/util/bit_set.dart';
 import 'package:stack/stack.dart';
 import 'parser/solfaParser.dart';
 import 'parser/solfaBaseListener.dart';
@@ -8,12 +12,30 @@ const showParseActions = false;
 
 void debugAction(String type, String value) {
   if (showParseActions) {
-    print("$type: $value");
+    // print("$type: $value");
   }
 }
 
-class SolfaParseListener extends solfaBaseListener {
+// class SolfaErrorListener extends BaseErrorListener {
+//   final Function(SFError) recordErrorCallback;
+//   final List<S>
+//   SolfaErrorListener(this.recordErrorCallback);
+//
+//   @override
+//   void syntaxError(
+//     Recognizer<ATNSimulator> recognizer,
+//     Object? offendingSymbol,
+//     int? line,
+//     int charPositionInLine,
+//     String msg,
+//     RecognitionException? e,
+//   ) {
+//   }
+// }
+
+class SolfaParseListener extends solfaBaseListener implements ErrorListener {
   List<dynamic> formList = [];
+  List<SFError> errorList = [];
   Stack<dynamic> sequenceStack = Stack<dynamic>();
   SFSequence? currentSequence;
 
@@ -151,8 +173,32 @@ class SolfaParseListener extends solfaBaseListener {
       column = ctx.start!.charPositionInLine;
     }
     SFBase? obj = buildSymbolLike(name, line, column);
-    if (obj != null) {
+    if (obj is SFError) {
+      errorList.add(obj);
+      print(obj);
+    } else {
+      assert(obj != null);
       add(obj);
     }
+  }
+
+  @override
+  void reportAmbiguity(Parser recognizer, DFA dfa, int startIndex, int stopIndex, bool exact,
+      BitSet? ambigAlts, ATNConfigSet configs) {}
+
+  @override
+  void reportAttemptingFullContext(Parser recognizer, DFA dfa, int startIndex, int stopIndex,
+      BitSet? conflictingAlts, ATNConfigSet configs) {}
+
+  @override
+  void reportContextSensitivity(Parser recognizer, DFA dfa, int startIndex, int stopIndex,
+      int prediction, ATNConfigSet configs) {}
+
+  @override
+  void syntaxError(Recognizer<ATNSimulator> recognizer, Object? offendingSymbol, int? line,
+      int charPositionInLine, String msg, RecognitionException<IntStream>? e) {
+    SFError err = SFError(msg, line: line, column: charPositionInLine);
+    errorList.add(err);
+    print(err);
   }
 }
