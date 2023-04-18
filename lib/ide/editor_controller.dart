@@ -9,7 +9,7 @@ import './line_view.dart';
 import './lisp_formatter.dart';
 import './document_provider.dart';
 import './document.dart';
-import '../lang/solfa_interpreter.dart';
+import '../lang/solfa_lang.dart';
 
 class EditorController extends StatefulWidget {
   final Widget child;
@@ -50,6 +50,7 @@ class EditControllerState extends State<EditorController> {
       child: Focus(
           focusNode: focusNode,
           autofocus: true,
+          descendantsAreFocusable: true,
           onKey: (FocusNode node, RawKeyEvent event) {
             if (event.runtimeType.toString() == 'RawKeyDownEvent') {
               String? keyPress = keyNamer.map(event);
@@ -178,14 +179,25 @@ class EditControllerState extends State<EditorController> {
           }
           break;
         case 'tab':
-          // todo: need to handle tab special
+          d.cursor.reset();
           int line = d.cursor.line;
+          int col = d.cursor.column;
           int indent = lf.indent(line: line);
+          int originalLength = d.lines[line].length;
           String s = d.lines[line].trimLeft();
+          int newLength = s.length;
+          int amountTrimmed = originalLength - newLength;
           for (int i = 0; i < indent; i++) {
             s = " $s";
           }
           d.lines[line] = s;
+          if (col < amountTrimmed) {
+            d.cursor.column = indent;
+            d.cursor.reset();
+          } else {
+            d.cursor.column = indent + col - amountTrimmed;
+            d.cursor.reset();
+          }
           break;
         case 'backspace':
           if (d.cursor.hasSelection()) {
@@ -220,6 +232,7 @@ class EditControllerState extends State<EditorController> {
             manipulateFullLine(d, () {
               FlutterClipboard.copy(d.selectedText());
               d.deleteSelectedText();
+              d.lines.removeAt(d.cursor.line);
             });
           }
           break;

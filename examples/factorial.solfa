@@ -1,7 +1,7 @@
-(defn fact [factor]
-      (if (lte? factor 1)
-          1
-          (mult factor
-                (fact (dec factor)))))
+(def fact (fn [factor]
+              (if (< factor 2)
+                  1
+                  (* factor
+                        (fact (- factor 1))))))
 
 (fact 5)

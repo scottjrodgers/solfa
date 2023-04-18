@@ -1,7 +1,8 @@
 ///
 /// the data objects for the Sol-Fa language
-/// TODO: Need "dump" procedure for each object to aid with debugging structure or unit testing.
 ///
+
+part of "solfa_lang.dart";
 
 class SFBase {
   int? line;
@@ -42,6 +43,15 @@ class SFSequence extends SFBase {
     } else {
       return SFSequence();
     }
+  }
+
+  dynamic nth(int n) {
+    // indexes in Solfa are 1-based
+    if (n >= 1 && n <= elements.length) {
+      return elements[n - 1];
+    }
+    assert(false, "nth called with invalid n - out of range: (1..length)");
+    return null;
   }
 
   @override
@@ -125,6 +135,20 @@ class SFConcurrent extends SFSequence {
     }
     return "$out]";
   }
+}
+
+class SFString extends SFBase {
+  final String _string;
+
+  SFString(this._string, {super.line, super.column});
+
+  String get name => _string;
+
+  @override
+  String toString() => _string;
+
+  @override
+  String dump() => '"$_string"';
 }
 
 class SFSymbol extends SFBase {
@@ -233,6 +257,15 @@ class Environment {
     return newEnv;
   }
 
+  void dump() {
+    for (String key in _scope.keys) {
+      dynamic value = _scope[key]!;
+
+      // ignore: avoid_print
+      print("'$key' => ${debugStr(value)}\n");
+    }
+  }
+
   /// finds and returns the value associated with the given key (name)
   dynamic get(String key) {
     if (_scope.containsKey(key)) {
@@ -245,7 +278,7 @@ class Environment {
   }
 
   /// assigns a value to a name (key) in the local scope (this environment)
-  void def(String key, SFBase value) {
+  void def(String key, dynamic value) {
     _scope[key] = value;
   }
 
@@ -266,12 +299,20 @@ class Environment {
     def(key, value);
   }
 
+  /// unset
+  /// - Removes the definition of the provided key
+  void unset(String key) {
+    if (_scope.containsKey(key)) {
+      _scope.remove(key);
+    }
+  }
+
   /// setBang
   /// - Sets the value of a key in the first environment it's found in.
   /// - If not found, it's created in the global scope
   /// key: String - the name of the value to set
   /// value: The value to be stored
-  void setBang(String key, dynamic value) {
+  void setGlobal(String key, dynamic value) {
     Environment e = this;
     while (e.parent != null) {
       if (e._scope.containsKey(key)) {
@@ -285,23 +326,24 @@ class Environment {
 }
 
 abstract class SFBaseFunc extends SFBase {
-  // Environment env;
-  SFBaseFunc({super.line, super.column});
-  // SFBaseFunc({required this.env, super.line, super.column});
+  Environment environment;
+  SFBaseFunc({required this.environment, super.line, super.column});
 }
 
 class SFFunc extends SFBaseFunc {
   String name;
   final List<dynamic> forms;
   final List<String> parameters;
+  final bool varArgs;
 
   SFFunc(
     this.parameters,
     this.forms, {
     this.name = "Unnamed-Function",
-    // required super.env,
+    this.varArgs = false,
     super.line,
     super.column,
+    required super.environment,
   });
 
   @override
@@ -317,7 +359,7 @@ class SFBuiltIn extends SFBaseFunc {
   String name;
   BuiltInFunction func;
 
-  SFBuiltIn(this.name, this.func);
+  SFBuiltIn(this.name, this.func, {required super.environment});
 
   @override
   String toString() => "<<Built-In:$name>>";
@@ -333,6 +375,7 @@ String debugStr(dynamic obj) {
   switch (type) {
     case "int":
     case "double":
+    case "bool":
     case "num":
       return "$obj";
     case "String":

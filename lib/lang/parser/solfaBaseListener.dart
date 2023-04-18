@@ -1,9 +1,11 @@
+// ignore_for_file: file_names, constant_identifier_names, camel_case_types, prefer_function_declarations_over_variables, non_constant_identifier_names, no_leading_underscores_for_local_identifiers
 // Generated from solfa.g4 by ANTLR 4.12.0
-// ignore_for_file: unused_import, unused_local_variable, prefer_single_quotes, file_names, camel_case_types, non_constant_identifier_names
+// ignore_for_file: unused_import, unused_local_variable, prefer_single_quotes
 import 'package:antlr4/antlr4.dart';
 
 import 'solfaParser.dart';
 import 'solfaListener.dart';
+
 
 /// This class provides an empty implementation of [solfaListener],
 /// which can be extended to create a listener which only needs to handle
@@ -80,6 +82,30 @@ class solfaBaseListener implements solfaListener {
   /// The default implementation does nothing.
   @override
   void exitLiteral(LiteralContext ctx) {}
+
+  /// The default implementation does nothing.
+  @override
+  void enterString(StringContext ctx) {}
+
+  /// The default implementation does nothing.
+  @override
+  void exitString(StringContext ctx) {}
+
+  /// The default implementation does nothing.
+  @override
+  void enterNil(NilContext ctx) {}
+
+  /// The default implementation does nothing.
+  @override
+  void exitNil(NilContext ctx) {}
+
+  /// The default implementation does nothing.
+  @override
+  void enterBoolean(BooleanContext ctx) {}
+
+  /// The default implementation does nothing.
+  @override
+  void exitBoolean(BooleanContext ctx) {}
 
   /// The default implementation does nothing.
   @override

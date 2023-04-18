@@ -4,8 +4,8 @@ import 'package:antlr4/antlr4.dart';
 // import './parser/solfaParser.dart';
 // import './parser/solfaLexer.dart';
 // import './solfa_parse_listener.dart';
-import './language_objects.dart';
-import './solfa_lang.dart';
+import 'solfa_lang.dart';
+import 'solfa_reader.dart';
 
 void main(List<String> args) async {
   String fname = '';
@@ -18,7 +18,7 @@ void main(List<String> args) async {
     fname = args[0];
   }
 
-  SolfaLang sf = SolfaLang();
+  SolfaReader sf = SolfaReader();
 
   for (int i = 0; i < 1; i++) {
     var input = await InputStream.fromPath(fname);

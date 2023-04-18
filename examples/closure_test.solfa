@@ -1,0 +1,4 @@
+(def make-counter (fn [] (set! x 0) (fn [] (set! x (+ x 1)) x)))
+(def cnt (make-counter))
+(cnt)
+(cnt)

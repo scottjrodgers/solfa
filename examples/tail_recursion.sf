@@ -1,0 +1,10 @@
+(def fact 
+     (fn [x]
+         (def fact-iter 
+              (fn fact-iter [product x]
+                  (if (< x 2)
+                      product
+                      (fact-iter (* product x) (- x 1)))))
+         (fact-iter 1 x)))
+
+(fact 5)

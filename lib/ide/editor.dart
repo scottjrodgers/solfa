@@ -58,7 +58,8 @@ class EditorState extends State<Editor> {
               TextButton(
                 onPressed: (() async {
                   // debugPrint("Load Pressed");
-                  FilePickerResult? result = await FilePicker.platform.pickFiles();
+                  FilePickerResult? result =
+                      await FilePicker.platform.pickFiles(lockParentWindow: true);
                   if (result != null) {
                     // File file = File(result.files.single.path!);
                     debugPrint("selected: ${result.files.single.path!}");

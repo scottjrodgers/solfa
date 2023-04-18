@@ -32,12 +32,15 @@ flutter:
   uses-material-design: true
 
   fonts:
-    - family: FiraCode
-      fonts:
-        - asset: fonts/FiraCode-Regular.ttf
-    - family: SourceCodePro
-      fonts:
-        - asset: fonts/Source Code Pro for Powerline.otf
     - family: DejaVuSansMono
       fonts:
         - asset: fonts/DejaVu Sans Mono for Powerline.ttf
+    - family: AnonymousPro
+      fonts:
+        - asset: fonts/AnonymousPro.ttf
+    - family: RobotoMono
+      fonts:
+        - asset: fonts/RobotoMono.ttf
+    - family: RedHatMono
+      fonts:
+        - asset: fonts/RedHatMono.ttf

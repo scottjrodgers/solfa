@@ -1,35 +1,18 @@
 // ignore_for_file: non_constant_identifier_names, avoid_print
 
 import 'package:antlr4/antlr4.dart';
-// ignore: implementation_imports
-import 'package:antlr4/src/util/bit_set.dart';
 import 'package:stack/stack.dart';
 import 'parser/solfaParser.dart';
 import 'parser/solfaBaseListener.dart';
-import 'language_objects.dart';
+import 'solfa_lang.dart';
+// ignore: implementation_imports
+import 'package:antlr4/src/util/bit_set.dart';
 
 const showParseActions = false;
 
-void debugAction(String type, String value) {
-  if (showParseActions) {
-    // print("$type: $value");
-  }
-}
-
-// class SolfaErrorListener extends BaseErrorListener {
-//   final Function(SFError) recordErrorCallback;
-//   final List<S>
-//   SolfaErrorListener(this.recordErrorCallback);
-//
-//   @override
-//   void syntaxError(
-//     Recognizer<ATNSimulator> recognizer,
-//     Object? offendingSymbol,
-//     int? line,
-//     int charPositionInLine,
-//     String msg,
-//     RecognitionException? e,
-//   ) {
+// void debugAction(String type, String value) {
+//   if (showParseActions) {
+//     // print("$type: $value");
 //   }
 // }
 
@@ -72,13 +55,13 @@ class SolfaParseListener extends solfaBaseListener implements ErrorListener {
     }
     SFSequence newSequence = SFList(line: line, column: column);
     startSeq(newSequence);
-    debugAction("list", "(");
+    // debugAction("list", "(");
   }
 
   @override
   void exitList_(List_Context ctx) {
     closeSeq();
-    debugAction("list", ")");
+    // debugAction("list", ")");
   }
 
   @override
@@ -90,13 +73,13 @@ class SolfaParseListener extends solfaBaseListener implements ErrorListener {
     }
     SFSequence newSequence = SFSequence(line: line, column: column);
     startSeq(newSequence);
-    debugAction("seq", "[");
+    // debugAction("seq", "[");
   }
 
   @override
   void exitSequence(SequenceContext ctx) {
     closeSeq();
-    debugAction("seq", "]");
+    // debugAction("seq", "]");
   }
 
   @override
@@ -108,13 +91,13 @@ class SolfaParseListener extends solfaBaseListener implements ErrorListener {
     }
     SFConcurrent newSequence = SFConcurrent(line: line, column: column);
     startSeq(newSequence);
-    debugAction("cc", "{");
+    // debugAction("cc", "{");
   }
 
   @override
   void exitConcurrent(ConcurrentContext ctx) {
     closeSeq();
-    debugAction("cc", "}");
+    // debugAction("cc", "}");
   }
 
   @override
@@ -146,27 +129,55 @@ class SolfaParseListener extends solfaBaseListener implements ErrorListener {
       dur = dottedTerminal.text!;
     }
     sq.duration = dur;
-    debugAction("dur", dur);
+    // debugAction("dur", dur);
   }
 
   @override
   void exitInt_(Int_Context ctx) {
     int value = int.parse(ctx.INT()!.text!);
-    debugAction("int", ctx.INT()!.text!);
+    // debugAction("int", ctx.INT()!.text!);
     add(value);
   }
 
   @override
   void exitFloat_(Float_Context ctx) {
     double value = double.parse(ctx.FLOAT()!.text!);
-    debugAction("float", ctx.FLOAT()!.text!);
+    // debugAction("float", ctx.FLOAT()!.text!);
     add(value);
+  }
+
+  @override
+  void exitString(StringContext ctx) {
+    String string = ctx.STRING()!.text!;
+    string = string.substring(1, string.length - 1);
+    int? line, column;
+    if (ctx.start != null) {
+      line = ctx.start!.line;
+      column = ctx.start!.charPositionInLine;
+    }
+    SFBase obj = SFString(string, line: line, column: column);
+    if (obj is SFError) {
+      errorList.add(obj);
+      print(obj);
+    } else {
+      add(obj);
+    }
+  }
+
+  @override
+  void exitNil(NilContext ctx) {
+    add(null);
+  }
+
+  @override
+  void exitBoolean(BooleanContext ctx) {
+    add(ctx.BOOLEAN()!.text! == "true");
   }
 
   @override
   void exitSymbol_like(Symbol_likeContext ctx) {
     String name = ctx.SYMBOL_LIKE()!.text!;
-    debugAction("symbol-like", name);
+    // debugAction("symbol-like", name);
     int? line, column;
     if (ctx.start != null) {
       line = ctx.start!.line;

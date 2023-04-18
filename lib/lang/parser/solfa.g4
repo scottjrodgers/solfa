@@ -29,11 +29,15 @@ squash_ : '{' forms '}' ;
 
 literal
      : number
-     | STRING
-     | NIL
-     | BOOLEAN
+     | string
+     | nil
+     | boolean
      | symbol_like
      ;
+
+string : STRING ;
+nil : NIL ;
+boolean : BOOLEAN ;
 
 duration : DOTTED | INT ;
 
@@ -47,45 +51,9 @@ float_: FLOAT ;
 
 symbol_like : SYMBOL_LIKE ;
 
-
-//-----------------------------------------
-// KEYWORDS
-//-----------------------------------------
-
-//IF : 'if' ;
-//ADD: 'add' ;
-//SUB: 'sub' ;
-//MULT: 'mult' ;
-//DIV: 'div' ;
-//MOD: 'mod' ;
-//DEFN: 'defn' ;
-//LET: 'let' ;
-//DEF: 'def' ;
-//SET: 'set' ;
-//SET_GLOBAL: 'set!' ;
-//EQ: 'eq?' ;
-//LT: 'lt?' ;
-//GT: 'gt?' ;
-//NE: 'ne?' ;
-//LTE: 'lte?' ;
-//GTE: 'gte?' ;
-//AND: 'and' ;
-//OR: 'or' ;
-//NOT: 'not' ;
-//INC: 'inc' ;
-//DEC: 'dec' ;
-//AT: '@' ;
-//PERCENT: '%' ;
-//PLUS: '+'  ;
-//MINUS: '-' ;
-//UNDERSCORE: '_' ;
-//F_SLASH: '/' ;
-//B_SLASH: '\\' ;
-
 //-----------------------------------------
 // LEXERS
 //-----------------------------------------
-//SCALE_TONES: [a-g] ;
 
 STRING : '"' ( ~'"' | '\\' '"')* '"' ;
 
@@ -99,7 +67,7 @@ NIL : 'nil' ;
 
 BOOLEAN: 'true' | 'false' ;
 
-SYMBOL_LIKE : [a-zA-Z<>!=@%] [a-zA-Z0-9_\-+.~=\\/?*]* ;
+SYMBOL_LIKE : [a-zA-Z<>!=@%\-+\\/?*] [a-zA-Z0-9_\-+.~=!\\/?*]* ;
 
 TRASH : ( WS | COMMENT ) -> skip ;
 

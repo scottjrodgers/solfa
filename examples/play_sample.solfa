@@ -1,0 +1,4 @@
+;(instrument 0 2)
+
+(play c16 d e d  e f e f  g a b- a- g8)
+ 

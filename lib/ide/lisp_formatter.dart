@@ -95,14 +95,20 @@ class LispFormatter {
     /// Maybe I need to start the current line (as passed in as parameter, line) after I
     /// process the preceding lines.  Because all I care about for the current line is where
     /// to put the first character.  After that I can continue.
+
+    String firstChar = "";
     for (int i = 0; i < doc.lines[line].length; i++) {
       String ch = doc.lines[line][i];
-      if (indents.isNotEmpty) {
-        if (ch == indents.last.end) {
-          return indents.last.open;
-        } else if (!ws.contains(ch)) {
-          return indents.last.indent;
-        }
+      if (ch != " ") {
+        firstChar = ch;
+        break;
+      }
+    }
+    if (indents.isNotEmpty) {
+      if (firstChar == indents.last.end) {
+        return indents.last.open;
+      } else {
+        return indents.last.indent;
       }
     }
     return 0;

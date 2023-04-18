@@ -32,6 +32,11 @@ class Cursor {
   bool hasSelection() {
     return line != anchorLine || column != anchorColumn;
   }
+
+  void reset() {
+    anchorLine = line;
+    anchorColumn = column;
+  }
 }
 
 ///
