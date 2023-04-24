@@ -171,6 +171,15 @@ abstract class SFBaseNote extends SFBase {
   SFBaseNote(this.note, this.duration, {super.line, super.column});
 }
 
+class SFInstrument extends SFBase {
+  final int device;
+  final int channel;
+  SFInstrument(this.device, this.channel);
+
+  @override
+  String dump() => "instr($device, $channel)";
+}
+
 class SFNote extends SFBaseNote {
   SFNote(super.note, super.duration, {super.line, super.column});
 
@@ -192,10 +201,9 @@ class SFSolfegeNote extends SFBaseNote {
   String dump() => "solf($note:$duration)";
 }
 
-class SFRest extends SFBase {
-  String? duration;
-
-  SFRest(this.duration, {super.line, super.column});
+class SFRest extends SFBaseNote {
+  SFRest(String? duration, {int? line, int? column})
+      : super('rest', duration, line: line, column: column);
 
   @override
   String dump() => "rest($duration)";
@@ -427,8 +435,8 @@ SFBase? buildSymbolLike(String sym, int? line, int? column) {
   int len = sym.length;
 
   RegExp durationRE = RegExp(r'[0-9]+\.*(~[0-9]+\.*)*');
-  RegExp toneRE = RegExp(r'[cdefgabr][_+\-]*');
-  RegExp solfegeRE = RegExp(r'[a-z]{2}');
+  RegExp toneRE = RegExp(r'[/\\]*[cdefgabr][_+\-]*');
+  RegExp solfegeRE = RegExp(r'[/\\]*[a-z]{2}');
   RegExp octaveRE = RegExp(r'o[0-8+\-]');
   RegExp markerRE = RegExp(r'[@%][a-zA-Z][a-zA-Z0-9_\-]*');
 
@@ -451,7 +459,7 @@ SFBase? buildSymbolLike(String sym, int? line, int? column) {
         return SFOctave(oct, line: line, column: column);
       }
     } else {
-      return SFError("Bad octave operation ($sym)", line: line, column: column);
+      print("Bad octave operation ($sym)");
     }
   }
 
@@ -506,7 +514,8 @@ SFBase? buildSymbolLike(String sym, int? line, int? column) {
           return SFNote(n, d, line: line, column: column);
         }
       } else {
-        return SFError("Bad note with duration ($sym)", line: line, column: column);
+        // return SFError("Bad note with duration ($sym)", line: line, column: column);
+        print("Bad note with duration ($sym)");
       }
     } else {
       if (toneMatch.start == 0 && toneMatch.end == len) {

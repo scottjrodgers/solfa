@@ -18,6 +18,7 @@ class SFInterpreter {
 
   void evalString(String script) {
     ParseResult result = solfa.parse(script);
+    print("debug: ${debugStr(result.forms)}");
     dynamic value;
     for (var form in result.forms) {
       value = eval(form, globalEnv);
@@ -40,7 +41,11 @@ bool isSelfEvaluating(dynamic exp) {
       exp is num ||
       exp is String ||
       exp is SFSequence ||
-      exp is SFBaseFunc) {
+      exp is SFBaseFunc ||
+      exp is SFBaseNote ||
+      exp is SFRest ||
+      exp is SFOctave ||
+      exp is SFOctaveChange) {
     return true;
   }
   return false;
@@ -229,9 +234,10 @@ dynamic eval(dynamic exp, Environment env) {
     } else {
       return null;
     }
-  } else if (isSelfEvaluating(exp)) {
-    return exp;
+  } else if (!isSelfEvaluating(exp)) {
+    print("ERROR: non-self-evaluating object remains: '${debugStr(exp)}'");
   }
+  return exp;
 }
 
 dynamic apply(dynamic function, List<dynamic> arguments) {

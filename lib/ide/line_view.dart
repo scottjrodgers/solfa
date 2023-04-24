@@ -3,7 +3,7 @@ import 'dart:collection';
 
 import 'document.dart';
 
-double fontSize = 18;
+double fontSize = 16;
 double gutterFontSize = 16;
 
 Size getTextExtents(String text, TextStyle style) {

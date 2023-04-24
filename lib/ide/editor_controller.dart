@@ -10,6 +10,7 @@ import './lisp_formatter.dart';
 import './document_provider.dart';
 import './document.dart';
 import '../lang/solfa_lang.dart';
+import '../midi/midi_interface.dart';
 
 class EditorController extends StatefulWidget {
   final Widget child;
@@ -43,6 +44,8 @@ class EditControllerState extends State<EditorController> {
       focusNode.requestFocus();
     }
 
+    MidiInterface midi = context.watch<MidiInterface>();
+
     DocumentProvider doc = Provider.of<DocumentProvider>(context);
     Document d = doc.doc;
 
@@ -55,7 +58,7 @@ class EditControllerState extends State<EditorController> {
             if (event.runtimeType.toString() == 'RawKeyDownEvent') {
               String? keyPress = keyNamer.map(event);
               if (keyPress != null) {
-                handleKey(keyPress, doc);
+                handleKey(keyPress, doc, midi);
                 doc.touch();
               }
             }
@@ -127,7 +130,7 @@ class EditControllerState extends State<EditorController> {
     d.cursor.anchorLine = curLine;
   }
 
-  void handleKey(String key, DocumentProvider doc) {
+  void handleKey(String key, DocumentProvider doc, MidiInterface midi) {
     Document d = doc.doc;
     LispFormatter lf = LispFormatter(doc: d);
 
@@ -166,6 +169,17 @@ class EditControllerState extends State<EditorController> {
         case 'enter':
           d.deleteSelectedText();
           d.insertNewLine();
+          break;
+        case 'cmd-k':
+          midi.stop();
+          break;
+        case 'cmd-p':
+          String script = "";
+          for (int i = 0; i < d.lines.length; i++) {
+            print("exec: ${d.lines[i]}");
+            script = "$script\n${d.lines[i]}";
+          }
+          solfa.evalString(script);
           break;
         case 'shift-enter':
           LineBounds bounds = identifyCodeBlock(d);

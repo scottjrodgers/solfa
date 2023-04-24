@@ -1,0 +1,101 @@
+; Invention No. 8
+; J.S. Bach
+
+(def piano (instrument 0 2))
+(def cello (instrument 0 1))
+(def cello2 (instrument 0 5))
+
+(def rh-section-1
+     [o5
+      [r8 f a f /c \f]
+      [/f8 e16 d c d c \b- a b- a g]
+      [f8 a /c \a /f c]
+      [a16 /c \b- /c  \a /c \b- /c  \a /c \b- /c]
+      [\f16 a g a f a g a f a g a]
+      [d16 f e f d f e f d f e f]
+      [\b8 g /d \b /f d]
+      [g16 a g f e f e d c d c \b-]
+      [a8 /d16 c \b /c \b a g a g f]
+      [e16 f e d c8 /c16 \b /c8 \e]
+      [f8 /c \e /c \d b]
+     ])
+(def lh-section-1 
+     [o4
+      [r2.]
+      [r8 f a f /c \f]
+      [/f8 e16 d c d c \b- a b- a g]
+      [f8 a /c \a /f c]
+      [a16 /c \b- /c  \a /c \b- /c  \a /c \b- /c]
+      [\f16 a g a f a g a f a g a]
+      [d16 f e f d f e f d f e f]
+      [\b8 g /c \g /e c]
+      [f16 g f e  d e d c  \b /c \b a]
+      [g8 /c16 \b  a b a g  f g f e]
+      [d16 e d c  g f e f  g8 \g]
+     ])
+
+(def rh-section-2
+     [o6
+      [c4 r r]
+      [r8 c e c g c]
+      [/c8 \b16 a  g a g f  e f e d]
+      [c16 \b- c a  c a \b- /a  c a \a /a]
+      [\b-8 g b- g /d \g]
+      [/g f16 e- d e- d c \b- /c \b- a]
+      [g8 b- /d \b- /g d]
+      [b- c+ b- c+ b- c+]
+      [d \a /f d a f]
+      [g16 f g b- c b- d b- e b- c b-]
+      [f e f a \b /a c+ a d a \b /a]
+      [e d e g \a /g \b /g c+ g \a /g]
+      [f8 d \b- /d \g /f]
+      [e c \a /c \f /e-]
+      [d16 f e- f  d f e- f d f e- f]
+      [\b- /d c d  \b- /d c d  \b- /d c d]
+      [\g b- a b-  g b- a b-  g b- a b-]
+      [e8 c g e b- g]
+      [/c16 d c \b-  a b- a g  f g f e-]
+      [d8 g16 f  e f e d c d c \b-]
+      [a b- a g f8 /f16 e f8 \a]
+      [b- /f \a /f \g /e]
+      &[f2 c2 \a2]
+     ]
+)
+(def lh-section-2
+     [o4
+      [r8 c e c g c]
+      [/c8 \b16 a  g a g f  e f e d]
+      [c8 e g e /c \g]
+      [/e- \f+ /e- \f+ /e- \f+]
+      [g f16 e- d e- d c \b- /c \b- a]
+      [g8 /g b- g /d \g]
+      [/g8 f16 e-  d e- d c  \b /c \b a]
+      [g f g /e  \g /e \f /e  \g /e \e /e]
+      [\f e f /d  \f /d \e /d  \f /d \d /d]
+      [\b-8 g e g c e]
+      [a f d f \b /d]
+      [g e c+ e \a /c+]
+      [\d16 /d c d  \g /d \a /d  \b /d \g /d]
+      [\c /c \b /c  \f /c \g /c  \a /c \f /c]
+      [\b-8 /d f d b- f]
+      [/d16 f e- f  d f e- f  d f e- f]
+      [\b- /d c d  \b- /d c d  \b- /d c d]
+      [\g b- a b-  g b- a b-  g b- a b-]
+      [e8 c f c a f]
+      [b-16 /c \b- a  g a g f  e f e d]
+      [c8 f16 e  d e d c  \b- /c \b- a]
+      [g a g f  /c \b- a b-  /c8 \c8]
+      [f2]
+     ]
+)
+
+
+(play 
+      &[[cello2 
+         rh-section-1 rh-section-2]
+
+        [cello 
+         lh-section-1 lh-section-2]
+        ]
+
+)

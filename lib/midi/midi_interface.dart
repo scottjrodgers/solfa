@@ -17,8 +17,13 @@ class MidiInterface {
     return 0;
   });
 
+  final Map<String, List<int>> activeNotes = {};
+
   // for playback
+  double tempo = 100.0; // BPM
   int lastTick = 0;
+  double timer = 0.0;
+  bool ready = false;
 
   factory MidiInterface() {
     // ignore: prefer_conditional_assignment
@@ -58,22 +63,44 @@ class MidiInterface {
     eventQueue.add(event);
   }
 
+  void start() {
+    timer = -tempo / 3600.0;
+    ready = true;
+  }
+
+  void stop() {
+    timer = 0;
+    ready = false;
+    for (List<int> n in activeNotes.values) {
+      noteOff(dev: n[0], ch: n[1], note: n[2], vel: 0);
+    }
+  }
+
+  String noteCode(int device, int channel, int note) {
+    return "$device:$channel:$note";
+  }
+
   void tick(int t) {
-    lastTick = t;
-    // if (t % 6 == 0) {
-    //   String queue = "";
-    //   for (var e in eventQueue.toList()) {
-    //     queue = "$queue${e.time}, ";
-    //   }
-    //   print("tick: $t  queue: [$queue]");
-    while (eventQueue.isNotEmpty && eventQueue.first.time <= t) {
-      MidiEvent e = eventQueue.removeFirst();
-      if (e is NoteOnEvent) {
-        noteOn(dev: e.device, ch: e.channel, note: e.note, vel: e.vel);
-      } else if (e is NoteOffEvent) {
-        noteOff(dev: e.device, ch: e.channel, note: e.note, vel: e.vel);
+    lastTick = (timer * 3600 / tempo).round();
+
+    if (ready) {
+      // tempo = X beats per minute, and 1 tick is 1/60.0 of second, 1/3600 of a minute
+      timer += tempo / 3600.0;
+
+      while (eventQueue.isNotEmpty && eventQueue.first.time <= timer) {
+        MidiEvent e = eventQueue.removeFirst();
+        if (e is NoteOnEvent) {
+          activeNotes[noteCode(e.device, e.channel, e.note)] = [e.device, e.channel, e.note];
+          noteOn(dev: e.device, ch: e.channel, note: e.note, vel: e.vel);
+        } else if (e is NoteOffEvent) {
+          noteOff(dev: e.device, ch: e.channel, note: e.note, vel: e.vel);
+          activeNotes.remove(noteCode(e.device, e.channel, e.note));
+        }
+        // }
       }
-      // }
+    }
+    if (eventQueue.isEmpty) {
+      ready = false;
     }
   }
 
@@ -194,7 +221,7 @@ class MidiInterface {
 }
 
 abstract class MidiEvent {
-  final int time;
+  final double time;
   final int device;
   final int channel;
 

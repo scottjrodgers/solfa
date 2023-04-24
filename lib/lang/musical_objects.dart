@@ -1,6 +1,6 @@
-class MusicalObject {
-  MusicalObject? next;
+import 'solfa_lang.dart';
 
+class MusicalObject extends SFBase {
   /// start is measured in beats
   double start;
 
@@ -10,31 +10,35 @@ class MusicalObject {
   MusicalObject(this.start, this.duration);
 
   double get end => start + duration;
+
+  @override
+  String dump() => "<<Musical Object>>";
 }
 
-class Note extends MusicalObject {
+class MidiNote extends MusicalObject {
   int midiNote;
   int velocity;
   double span;
   int device;
   int channel;
 
-  Note(double start, this.device, this.channel, this.midiNote, double duration, this.velocity,
+  MidiNote(double start, this.device, this.channel, this.midiNote, double duration, this.velocity,
       {this.span = 0.9})
       : super(start, duration);
 }
 
-class Rest extends MusicalObject {
-  Rest(super.start, super.duration);
+class MidiRest extends MusicalObject {
+  MidiRest(super.start, super.duration);
 }
 
-class MusicalSequence extends MusicalObject {
+class MidiSequence extends MusicalObject {
   MusicalObject? first;
   MusicalObject? last;
-  MusicalSequence(super.start, super.duration);
+  final List<MusicalObject> objects = [];
+  MidiSequence(super.start, super.duration);
 }
 
-class MusicalConsequent extends MusicalObject {
+class MidiConcurrent extends MusicalObject {
   final List<MusicalObject> objects = [];
-  MusicalConsequent(super.start, super.duration);
+  MidiConcurrent(super.start, super.duration);
 }

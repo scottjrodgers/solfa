@@ -1,11 +1,8 @@
 // ignore_for_file: avoid_print
 
 import 'package:antlr4/antlr4.dart';
-// import './parser/solfaParser.dart';
-// import './parser/solfaLexer.dart';
-// import './solfa_parse_listener.dart';
-import 'solfa_lang.dart';
 import 'solfa_reader.dart';
+import 'solfa_lang.dart';
 
 void main(List<String> args) async {
   String fname = '';

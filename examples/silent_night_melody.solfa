@@ -1,7 +1,7 @@
 ; Silent Night
 ; Melody only
 
-(def soprano
+(def melody
      [o4
       [g8. a16 g8 e4.]
       [g8. a16 g8 e4.]
@@ -17,3 +17,5 @@
       [c2.]
      ]
 )
+
+(play melody)

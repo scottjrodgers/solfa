@@ -63,23 +63,13 @@ class CustomImagePainter extends CustomPainter {
   final Paint pendulumHead = Paint()
     ..color = const Color(0xFF8090A0)
     ..style = PaintingStyle.fill;
-  final Paint metroBody = Paint()
-    ..color = const Color(0xFF503018)
-    ..style = PaintingStyle.fill;
-  final Paint pendulumBar = Paint()
-    ..color = const Color(0xFF708090)
-    ..style = PaintingStyle.stroke
-    ..strokeWidth = 3.0;
-  final Paint scaleNormal = Paint()
-    ..color = const Color(0xFF402010)
-    ..style = PaintingStyle.fill;
 
   final MidiWidgetState state;
   CustomImagePainter(this.state);
 
   @override
   void paint(Canvas canvas, Size size) {
-    double pendulumPos = (state.ticks % 72) / 36.0;
+    double pendulumPos = (state.midi.timer % 2);
     double ox = size.width / 2;
     double oy = size.height - 25;
     double ang = pendulumPos * pi;

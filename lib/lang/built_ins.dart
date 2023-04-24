@@ -1,6 +1,8 @@
 import 'dart:math';
+import 'package:collection/collection.dart';
 import 'solfa_lang.dart';
 import '../midi/midi_interface.dart';
+import "musical_objects.dart";
 
 part "built_in_player.dart";
 
