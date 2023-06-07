@@ -261,8 +261,9 @@ class Document {
 
   void deleteLine({int numberOfLines = 1}) {
     for (int i = 0; i < numberOfLines; i++) {
-      moveCursorToStartOfLine();
-      deleteText(numberOfCharacters: lines[cursor.line].length);
+      // moveCursorToStartOfLine();
+      // deleteText(numberOfCharacters: lines[cursor.line].length);
+      lines.removeAt(cursor.line);
     }
     _validateCursor(false);
   }

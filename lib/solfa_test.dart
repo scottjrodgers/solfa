@@ -1,8 +1,8 @@
 // ignore_for_file: avoid_print
-
+import 'package:flutter/material.dart';
 import 'package:antlr4/antlr4.dart';
-import 'solfa_reader.dart';
-import 'solfa_lang.dart';
+import 'lang/solfa_reader.dart';
+import 'lang/solfa_lang.dart';
 
 void main(List<String> args) async {
   String fname = '';

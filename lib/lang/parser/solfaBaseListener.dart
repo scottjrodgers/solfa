@@ -85,6 +85,30 @@ class solfaBaseListener implements solfaListener {
 
   /// The default implementation does nothing.
   @override
+  void enterRepeats(RepeatsContext ctx) {}
+
+  /// The default implementation does nothing.
+  @override
+  void exitRepeats(RepeatsContext ctx) {}
+
+  /// The default implementation does nothing.
+  @override
+  void enterVariations(VariationsContext ctx) {}
+
+  /// The default implementation does nothing.
+  @override
+  void exitVariations(VariationsContext ctx) {}
+
+  /// The default implementation does nothing.
+  @override
+  void enterA_variation(A_variationContext ctx) {}
+
+  /// The default implementation does nothing.
+  @override
+  void exitA_variation(A_variationContext ctx) {}
+
+  /// The default implementation does nothing.
+  @override
   void enterString(StringContext ctx) {}
 
   /// The default implementation does nothing.

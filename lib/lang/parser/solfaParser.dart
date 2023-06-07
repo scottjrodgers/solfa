@@ -7,9 +7,9 @@ import 'solfaListener.dart';
 import 'solfaBaseListener.dart';
 const int RULE_script = 0, RULE_form = 1, RULE_forms = 2, RULE_list_ = 3, 
           RULE_sequence = 4, RULE_concurrent = 5, RULE_squash = 6, RULE_squash_ = 7, 
-          RULE_literal = 8, RULE_string = 9, RULE_nil = 10, RULE_boolean = 11, 
-          RULE_duration = 12, RULE_number = 13, RULE_int_ = 14, RULE_float_ = 15, 
-          RULE_symbol_like = 16;
+          RULE_literal = 8, RULE_repeats = 9, RULE_variations = 10, RULE_a_variation = 11, 
+          RULE_string = 12, RULE_nil = 13, RULE_boolean = 14, RULE_duration = 15, 
+          RULE_number = 16, RULE_int_ = 17, RULE_float_ = 18, RULE_symbol_like = 19;
 class solfaParser extends Parser {
   static final checkVersion = () => RuntimeMetaData.checkVersion('4.12.0', RuntimeMetaData.VERSION);
   static const int TOKEN_EOF = IntStream.EOF;
@@ -18,24 +18,27 @@ class solfaParser extends Parser {
       _ATN.numberOfDecisions, (i) => DFA(_ATN.getDecisionState(i), i));
   static final PredictionContextCache _sharedContextCache = PredictionContextCache();
   static const int TOKEN_T__0 = 1, TOKEN_T__1 = 2, TOKEN_T__2 = 3, TOKEN_T__3 = 4, 
-                   TOKEN_T__4 = 5, TOKEN_T__5 = 6, TOKEN_T__6 = 7, TOKEN_STRING = 8, 
-                   TOKEN_DOTTED = 9, TOKEN_FLOAT = 10, TOKEN_INT = 11, TOKEN_NIL = 12, 
-                   TOKEN_BOOLEAN = 13, TOKEN_SYMBOL_LIKE = 14, TOKEN_TRASH = 15;
+                   TOKEN_T__4 = 5, TOKEN_T__5 = 6, TOKEN_T__6 = 7, TOKEN_T__7 = 8, 
+                   TOKEN_T__8 = 9, TOKEN_STRING = 10, TOKEN_DOTTED = 11, 
+                   TOKEN_FLOAT = 12, TOKEN_INT = 13, TOKEN_NIL = 14, TOKEN_BOOLEAN = 15, 
+                   TOKEN_STAR = 16, TOKEN_COLON = 17, TOKEN_SYMBOL_LIKE = 18, 
+                   TOKEN_TRASH = 19;
 
   @override
   final List<String> ruleNames = [
     'script', 'form', 'forms', 'list_', 'sequence', 'concurrent', 'squash', 
-    'squash_', 'literal', 'string', 'nil', 'boolean', 'duration', 'number', 
-    'int_', 'float_', 'symbol_like'
+    'squash_', 'literal', 'repeats', 'variations', 'a_variation', 'string', 
+    'nil', 'boolean', 'duration', 'number', 'int_', 'float_', 'symbol_like'
   ];
 
   static final List<String?> _LITERAL_NAMES = [
-      null, "'('", "')'", "'['", "']'", "'&['", "'{'", "'}'", null, null, 
-      null, null, "'nil'"
+      null, "'('", "')'", "'['", "']'", "'&['", "'{'", "'}'", "','", "'-'", 
+      null, null, null, null, "'nil'", null, "'*'", "':'"
   ];
   static final List<String?> _SYMBOLIC_NAMES = [
-      null, null, null, null, null, null, null, null, "STRING", "DOTTED", 
-      "FLOAT", "INT", "NIL", "BOOLEAN", "SYMBOL_LIKE", "TRASH"
+      null, null, null, null, null, null, null, null, null, null, "STRING", 
+      "DOTTED", "FLOAT", "INT", "NIL", "BOOLEAN", "STAR", "COLON", "SYMBOL_LIKE", 
+      "TRASH"
   ];
   static final Vocabulary VOCABULARY = VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);
 
@@ -65,17 +68,17 @@ class solfaParser extends Parser {
     int _la;
     try {
       enterOuterAlt(_localctx, 1);
-      state = 37;
+      state = 43;
       errorHandler.sync(this);
       _la = tokenStream.LA(1)!;
-      while ((((_la) & ~0x3f) == 0 && ((1 << _la) & 32106) != 0)) {
-        state = 34;
+      while ((((_la) & ~0x3f) == 0 && ((1 << _la) & 521322) != 0)) {
+        state = 40;
         form();
-        state = 39;
+        state = 45;
         errorHandler.sync(this);
         _la = tokenStream.LA(1)!;
       }
-      state = 40;
+      state = 46;
       match(TOKEN_EOF);
     } on RecognitionException catch (re) {
       _localctx.exception = re;
@@ -91,12 +94,12 @@ class solfaParser extends Parser {
     dynamic _localctx = FormContext(context, state);
     enterRule(_localctx, 2, RULE_form);
     try {
-      state = 47;
+      state = 53;
       errorHandler.sync(this);
       switch (tokenStream.LA(1)!) {
       case TOKEN_T__5:
         enterOuterAlt(_localctx, 1);
-        state = 42;
+        state = 48;
         squash();
         break;
       case TOKEN_STRING:
@@ -104,24 +107,26 @@ class solfaParser extends Parser {
       case TOKEN_INT:
       case TOKEN_NIL:
       case TOKEN_BOOLEAN:
+      case TOKEN_STAR:
+      case TOKEN_COLON:
       case TOKEN_SYMBOL_LIKE:
         enterOuterAlt(_localctx, 2);
-        state = 43;
+        state = 49;
         literal();
         break;
       case TOKEN_T__0:
         enterOuterAlt(_localctx, 3);
-        state = 44;
+        state = 50;
         list_();
         break;
       case TOKEN_T__2:
         enterOuterAlt(_localctx, 4);
-        state = 45;
+        state = 51;
         sequence();
         break;
       case TOKEN_T__4:
         enterOuterAlt(_localctx, 5);
-        state = 46;
+        state = 52;
         concurrent();
         break;
       default:
@@ -143,13 +148,13 @@ class solfaParser extends Parser {
     int _la;
     try {
       enterOuterAlt(_localctx, 1);
-      state = 52;
+      state = 58;
       errorHandler.sync(this);
       _la = tokenStream.LA(1)!;
-      while ((((_la) & ~0x3f) == 0 && ((1 << _la) & 32106) != 0)) {
-        state = 49;
+      while ((((_la) & ~0x3f) == 0 && ((1 << _la) & 521322) != 0)) {
+        state = 55;
         form();
-        state = 54;
+        state = 60;
         errorHandler.sync(this);
         _la = tokenStream.LA(1)!;
       }
@@ -168,11 +173,11 @@ class solfaParser extends Parser {
     enterRule(_localctx, 6, RULE_list_);
     try {
       enterOuterAlt(_localctx, 1);
-      state = 55;
+      state = 61;
       match(TOKEN_T__0);
-      state = 56;
+      state = 62;
       forms();
-      state = 57;
+      state = 63;
       match(TOKEN_T__1);
     } on RecognitionException catch (re) {
       _localctx.exception = re;
@@ -189,11 +194,11 @@ class solfaParser extends Parser {
     enterRule(_localctx, 8, RULE_sequence);
     try {
       enterOuterAlt(_localctx, 1);
-      state = 59;
+      state = 65;
       match(TOKEN_T__2);
-      state = 60;
+      state = 66;
       forms();
-      state = 61;
+      state = 67;
       match(TOKEN_T__3);
     } on RecognitionException catch (re) {
       _localctx.exception = re;
@@ -210,11 +215,11 @@ class solfaParser extends Parser {
     enterRule(_localctx, 10, RULE_concurrent);
     try {
       enterOuterAlt(_localctx, 1);
-      state = 63;
+      state = 69;
       match(TOKEN_T__4);
-      state = 64;
+      state = 70;
       forms();
-      state = 65;
+      state = 71;
       match(TOKEN_T__3);
     } on RecognitionException catch (re) {
       _localctx.exception = re;
@@ -230,19 +235,19 @@ class solfaParser extends Parser {
     dynamic _localctx = SquashContext(context, state);
     enterRule(_localctx, 12, RULE_squash);
     try {
-      state = 71;
+      state = 77;
       errorHandler.sync(this);
       switch (interpreter!.adaptivePredict(tokenStream, 3, context)) {
       case 1:
         enterOuterAlt(_localctx, 1);
-        state = 67;
+        state = 73;
         squash_();
-        state = 68;
+        state = 74;
         duration();
         break;
       case 2:
         enterOuterAlt(_localctx, 2);
-        state = 70;
+        state = 76;
         squash_();
         break;
       }
@@ -261,11 +266,11 @@ class solfaParser extends Parser {
     enterRule(_localctx, 14, RULE_squash_);
     try {
       enterOuterAlt(_localctx, 1);
-      state = 73;
+      state = 79;
       match(TOKEN_T__5);
-      state = 74;
+      state = 80;
       forms();
-      state = 75;
+      state = 81;
       match(TOKEN_T__6);
     } on RecognitionException catch (re) {
       _localctx.exception = re;
@@ -281,33 +286,43 @@ class solfaParser extends Parser {
     dynamic _localctx = LiteralContext(context, state);
     enterRule(_localctx, 16, RULE_literal);
     try {
-      state = 82;
+      state = 90;
       errorHandler.sync(this);
       switch (tokenStream.LA(1)!) {
+      case TOKEN_STAR:
+        enterOuterAlt(_localctx, 1);
+        state = 83;
+        repeats();
+        break;
+      case TOKEN_COLON:
+        enterOuterAlt(_localctx, 2);
+        state = 84;
+        variations();
+        break;
       case TOKEN_FLOAT:
       case TOKEN_INT:
-        enterOuterAlt(_localctx, 1);
-        state = 77;
+        enterOuterAlt(_localctx, 3);
+        state = 85;
         number();
         break;
       case TOKEN_STRING:
-        enterOuterAlt(_localctx, 2);
-        state = 78;
+        enterOuterAlt(_localctx, 4);
+        state = 86;
         string();
         break;
       case TOKEN_NIL:
-        enterOuterAlt(_localctx, 3);
-        state = 79;
+        enterOuterAlt(_localctx, 5);
+        state = 87;
         nil();
         break;
       case TOKEN_BOOLEAN:
-        enterOuterAlt(_localctx, 4);
-        state = 80;
+        enterOuterAlt(_localctx, 6);
+        state = 88;
         boolean();
         break;
       case TOKEN_SYMBOL_LIKE:
-        enterOuterAlt(_localctx, 5);
-        state = 81;
+        enterOuterAlt(_localctx, 7);
+        state = 89;
         symbol_like();
         break;
       default:
@@ -323,12 +338,95 @@ class solfaParser extends Parser {
     return _localctx;
   }
 
-  StringContext string() {
-    dynamic _localctx = StringContext(context, state);
-    enterRule(_localctx, 18, RULE_string);
+  RepeatsContext repeats() {
+    dynamic _localctx = RepeatsContext(context, state);
+    enterRule(_localctx, 18, RULE_repeats);
     try {
       enterOuterAlt(_localctx, 1);
-      state = 84;
+      state = 92;
+      match(TOKEN_STAR);
+      state = 93;
+      match(TOKEN_INT);
+    } on RecognitionException catch (re) {
+      _localctx.exception = re;
+      errorHandler.reportError(this, re);
+      errorHandler.recover(this, re);
+    } finally {
+      exitRule();
+    }
+    return _localctx;
+  }
+
+  VariationsContext variations() {
+    dynamic _localctx = VariationsContext(context, state);
+    enterRule(_localctx, 20, RULE_variations);
+    int _la;
+    try {
+      enterOuterAlt(_localctx, 1);
+      state = 95;
+      match(TOKEN_COLON);
+      state = 96;
+      a_variation();
+      state = 101;
+      errorHandler.sync(this);
+      _la = tokenStream.LA(1)!;
+      while (_la == TOKEN_T__7) {
+        state = 97;
+        match(TOKEN_T__7);
+        state = 98;
+        a_variation();
+        state = 103;
+        errorHandler.sync(this);
+        _la = tokenStream.LA(1)!;
+      }
+    } on RecognitionException catch (re) {
+      _localctx.exception = re;
+      errorHandler.reportError(this, re);
+      errorHandler.recover(this, re);
+    } finally {
+      exitRule();
+    }
+    return _localctx;
+  }
+
+  A_variationContext a_variation() {
+    dynamic _localctx = A_variationContext(context, state);
+    enterRule(_localctx, 22, RULE_a_variation);
+    try {
+      state = 108;
+      errorHandler.sync(this);
+      switch (interpreter!.adaptivePredict(tokenStream, 6, context)) {
+      case 1:
+        enterOuterAlt(_localctx, 1);
+        state = 104;
+        match(TOKEN_INT);
+        break;
+      case 2:
+        enterOuterAlt(_localctx, 2);
+        state = 105;
+        match(TOKEN_INT);
+        state = 106;
+        match(TOKEN_T__8);
+        state = 107;
+        match(TOKEN_INT);
+        break;
+      }
+    } on RecognitionException catch (re) {
+      _localctx.exception = re;
+      errorHandler.reportError(this, re);
+      errorHandler.recover(this, re);
+    } finally {
+      exitRule();
+    }
+    return _localctx;
+  }
+
+  StringContext string() {
+    dynamic _localctx = StringContext(context, state);
+    enterRule(_localctx, 24, RULE_string);
+    try {
+      enterOuterAlt(_localctx, 1);
+      state = 110;
       match(TOKEN_STRING);
     } on RecognitionException catch (re) {
       _localctx.exception = re;
@@ -342,10 +440,10 @@ class solfaParser extends Parser {
 
   NilContext nil() {
     dynamic _localctx = NilContext(context, state);
-    enterRule(_localctx, 20, RULE_nil);
+    enterRule(_localctx, 26, RULE_nil);
     try {
       enterOuterAlt(_localctx, 1);
-      state = 86;
+      state = 112;
       match(TOKEN_NIL);
     } on RecognitionException catch (re) {
       _localctx.exception = re;
@@ -359,10 +457,10 @@ class solfaParser extends Parser {
 
   BooleanContext boolean() {
     dynamic _localctx = BooleanContext(context, state);
-    enterRule(_localctx, 22, RULE_boolean);
+    enterRule(_localctx, 28, RULE_boolean);
     try {
       enterOuterAlt(_localctx, 1);
-      state = 88;
+      state = 114;
       match(TOKEN_BOOLEAN);
     } on RecognitionException catch (re) {
       _localctx.exception = re;
@@ -376,11 +474,11 @@ class solfaParser extends Parser {
 
   DurationContext duration() {
     dynamic _localctx = DurationContext(context, state);
-    enterRule(_localctx, 24, RULE_duration);
+    enterRule(_localctx, 30, RULE_duration);
     int _la;
     try {
       enterOuterAlt(_localctx, 1);
-      state = 90;
+      state = 116;
       _la = tokenStream.LA(1)!;
       if (!(_la == TOKEN_DOTTED || _la == TOKEN_INT)) {
       errorHandler.recoverInline(this);
@@ -401,19 +499,19 @@ class solfaParser extends Parser {
 
   NumberContext number() {
     dynamic _localctx = NumberContext(context, state);
-    enterRule(_localctx, 26, RULE_number);
+    enterRule(_localctx, 32, RULE_number);
     try {
-      state = 94;
+      state = 120;
       errorHandler.sync(this);
       switch (tokenStream.LA(1)!) {
       case TOKEN_INT:
         enterOuterAlt(_localctx, 1);
-        state = 92;
+        state = 118;
         int_();
         break;
       case TOKEN_FLOAT:
         enterOuterAlt(_localctx, 2);
-        state = 93;
+        state = 119;
         float_();
         break;
       default:
@@ -431,10 +529,10 @@ class solfaParser extends Parser {
 
   Int_Context int_() {
     dynamic _localctx = Int_Context(context, state);
-    enterRule(_localctx, 28, RULE_int_);
+    enterRule(_localctx, 34, RULE_int_);
     try {
       enterOuterAlt(_localctx, 1);
-      state = 96;
+      state = 122;
       match(TOKEN_INT);
     } on RecognitionException catch (re) {
       _localctx.exception = re;
@@ -448,10 +546,10 @@ class solfaParser extends Parser {
 
   Float_Context float_() {
     dynamic _localctx = Float_Context(context, state);
-    enterRule(_localctx, 30, RULE_float_);
+    enterRule(_localctx, 36, RULE_float_);
     try {
       enterOuterAlt(_localctx, 1);
-      state = 98;
+      state = 124;
       match(TOKEN_FLOAT);
     } on RecognitionException catch (re) {
       _localctx.exception = re;
@@ -465,10 +563,10 @@ class solfaParser extends Parser {
 
   Symbol_likeContext symbol_like() {
     dynamic _localctx = Symbol_likeContext(context, state);
-    enterRule(_localctx, 32, RULE_symbol_like);
+    enterRule(_localctx, 38, RULE_symbol_like);
     try {
       enterOuterAlt(_localctx, 1);
-      state = 100;
+      state = 126;
       match(TOKEN_SYMBOL_LIKE);
     } on RecognitionException catch (re) {
       _localctx.exception = re;
@@ -481,36 +579,45 @@ class solfaParser extends Parser {
   }
 
   static const List<int> _serializedATN = [
-      4,1,15,103,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,2,6,7,6,
+      4,1,19,129,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,2,6,7,6,
       2,7,7,7,2,8,7,8,2,9,7,9,2,10,7,10,2,11,7,11,2,12,7,12,2,13,7,13,2,
-      14,7,14,2,15,7,15,2,16,7,16,1,0,5,0,36,8,0,10,0,12,0,39,9,0,1,0,1,
-      0,1,1,1,1,1,1,1,1,1,1,3,1,48,8,1,1,2,5,2,51,8,2,10,2,12,2,54,9,2,1,
-      3,1,3,1,3,1,3,1,4,1,4,1,4,1,4,1,5,1,5,1,5,1,5,1,6,1,6,1,6,1,6,3,6,
-      72,8,6,1,7,1,7,1,7,1,7,1,8,1,8,1,8,1,8,1,8,3,8,83,8,8,1,9,1,9,1,10,
-      1,10,1,11,1,11,1,12,1,12,1,13,1,13,3,13,95,8,13,1,14,1,14,1,15,1,15,
-      1,16,1,16,1,16,0,0,17,0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,
-      0,1,2,0,9,9,11,11,97,0,37,1,0,0,0,2,47,1,0,0,0,4,52,1,0,0,0,6,55,1,
-      0,0,0,8,59,1,0,0,0,10,63,1,0,0,0,12,71,1,0,0,0,14,73,1,0,0,0,16,82,
-      1,0,0,0,18,84,1,0,0,0,20,86,1,0,0,0,22,88,1,0,0,0,24,90,1,0,0,0,26,
-      94,1,0,0,0,28,96,1,0,0,0,30,98,1,0,0,0,32,100,1,0,0,0,34,36,3,2,1,
-      0,35,34,1,0,0,0,36,39,1,0,0,0,37,35,1,0,0,0,37,38,1,0,0,0,38,40,1,
-      0,0,0,39,37,1,0,0,0,40,41,5,0,0,1,41,1,1,0,0,0,42,48,3,12,6,0,43,48,
-      3,16,8,0,44,48,3,6,3,0,45,48,3,8,4,0,46,48,3,10,5,0,47,42,1,0,0,0,
-      47,43,1,0,0,0,47,44,1,0,0,0,47,45,1,0,0,0,47,46,1,0,0,0,48,3,1,0,0,
-      0,49,51,3,2,1,0,50,49,1,0,0,0,51,54,1,0,0,0,52,50,1,0,0,0,52,53,1,
-      0,0,0,53,5,1,0,0,0,54,52,1,0,0,0,55,56,5,1,0,0,56,57,3,4,2,0,57,58,
-      5,2,0,0,58,7,1,0,0,0,59,60,5,3,0,0,60,61,3,4,2,0,61,62,5,4,0,0,62,
-      9,1,0,0,0,63,64,5,5,0,0,64,65,3,4,2,0,65,66,5,4,0,0,66,11,1,0,0,0,
-      67,68,3,14,7,0,68,69,3,24,12,0,69,72,1,0,0,0,70,72,3,14,7,0,71,67,
-      1,0,0,0,71,70,1,0,0,0,72,13,1,0,0,0,73,74,5,6,0,0,74,75,3,4,2,0,75,
-      76,5,7,0,0,76,15,1,0,0,0,77,83,3,26,13,0,78,83,3,18,9,0,79,83,3,20,
-      10,0,80,83,3,22,11,0,81,83,3,32,16,0,82,77,1,0,0,0,82,78,1,0,0,0,82,
-      79,1,0,0,0,82,80,1,0,0,0,82,81,1,0,0,0,83,17,1,0,0,0,84,85,5,8,0,0,
-      85,19,1,0,0,0,86,87,5,12,0,0,87,21,1,0,0,0,88,89,5,13,0,0,89,23,1,
-      0,0,0,90,91,7,0,0,0,91,25,1,0,0,0,92,95,3,28,14,0,93,95,3,30,15,0,
-      94,92,1,0,0,0,94,93,1,0,0,0,95,27,1,0,0,0,96,97,5,11,0,0,97,29,1,0,
-      0,0,98,99,5,10,0,0,99,31,1,0,0,0,100,101,5,14,0,0,101,33,1,0,0,0,6,
-      37,47,52,71,82,94
+      14,7,14,2,15,7,15,2,16,7,16,2,17,7,17,2,18,7,18,2,19,7,19,1,0,5,0,
+      42,8,0,10,0,12,0,45,9,0,1,0,1,0,1,1,1,1,1,1,1,1,1,1,3,1,54,8,1,1,2,
+      5,2,57,8,2,10,2,12,2,60,9,2,1,3,1,3,1,3,1,3,1,4,1,4,1,4,1,4,1,5,1,
+      5,1,5,1,5,1,6,1,6,1,6,1,6,3,6,78,8,6,1,7,1,7,1,7,1,7,1,8,1,8,1,8,1,
+      8,1,8,1,8,1,8,3,8,91,8,8,1,9,1,9,1,9,1,10,1,10,1,10,1,10,5,10,100,
+      8,10,10,10,12,10,103,9,10,1,11,1,11,1,11,1,11,3,11,109,8,11,1,12,1,
+      12,1,13,1,13,1,14,1,14,1,15,1,15,1,16,1,16,3,16,121,8,16,1,17,1,17,
+      1,18,1,18,1,19,1,19,1,19,0,0,20,0,2,4,6,8,10,12,14,16,18,20,22,24,
+      26,28,30,32,34,36,38,0,1,2,0,11,11,13,13,124,0,43,1,0,0,0,2,53,1,0,
+      0,0,4,58,1,0,0,0,6,61,1,0,0,0,8,65,1,0,0,0,10,69,1,0,0,0,12,77,1,0,
+      0,0,14,79,1,0,0,0,16,90,1,0,0,0,18,92,1,0,0,0,20,95,1,0,0,0,22,108,
+      1,0,0,0,24,110,1,0,0,0,26,112,1,0,0,0,28,114,1,0,0,0,30,116,1,0,0,
+      0,32,120,1,0,0,0,34,122,1,0,0,0,36,124,1,0,0,0,38,126,1,0,0,0,40,42,
+      3,2,1,0,41,40,1,0,0,0,42,45,1,0,0,0,43,41,1,0,0,0,43,44,1,0,0,0,44,
+      46,1,0,0,0,45,43,1,0,0,0,46,47,5,0,0,1,47,1,1,0,0,0,48,54,3,12,6,0,
+      49,54,3,16,8,0,50,54,3,6,3,0,51,54,3,8,4,0,52,54,3,10,5,0,53,48,1,
+      0,0,0,53,49,1,0,0,0,53,50,1,0,0,0,53,51,1,0,0,0,53,52,1,0,0,0,54,3,
+      1,0,0,0,55,57,3,2,1,0,56,55,1,0,0,0,57,60,1,0,0,0,58,56,1,0,0,0,58,
+      59,1,0,0,0,59,5,1,0,0,0,60,58,1,0,0,0,61,62,5,1,0,0,62,63,3,4,2,0,
+      63,64,5,2,0,0,64,7,1,0,0,0,65,66,5,3,0,0,66,67,3,4,2,0,67,68,5,4,0,
+      0,68,9,1,0,0,0,69,70,5,5,0,0,70,71,3,4,2,0,71,72,5,4,0,0,72,11,1,0,
+      0,0,73,74,3,14,7,0,74,75,3,30,15,0,75,78,1,0,0,0,76,78,3,14,7,0,77,
+      73,1,0,0,0,77,76,1,0,0,0,78,13,1,0,0,0,79,80,5,6,0,0,80,81,3,4,2,0,
+      81,82,5,7,0,0,82,15,1,0,0,0,83,91,3,18,9,0,84,91,3,20,10,0,85,91,3,
+      32,16,0,86,91,3,24,12,0,87,91,3,26,13,0,88,91,3,28,14,0,89,91,3,38,
+      19,0,90,83,1,0,0,0,90,84,1,0,0,0,90,85,1,0,0,0,90,86,1,0,0,0,90,87,
+      1,0,0,0,90,88,1,0,0,0,90,89,1,0,0,0,91,17,1,0,0,0,92,93,5,16,0,0,93,
+      94,5,13,0,0,94,19,1,0,0,0,95,96,5,17,0,0,96,101,3,22,11,0,97,98,5,
+      8,0,0,98,100,3,22,11,0,99,97,1,0,0,0,100,103,1,0,0,0,101,99,1,0,0,
+      0,101,102,1,0,0,0,102,21,1,0,0,0,103,101,1,0,0,0,104,109,5,13,0,0,
+      105,106,5,13,0,0,106,107,5,9,0,0,107,109,5,13,0,0,108,104,1,0,0,0,
+      108,105,1,0,0,0,109,23,1,0,0,0,110,111,5,10,0,0,111,25,1,0,0,0,112,
+      113,5,14,0,0,113,27,1,0,0,0,114,115,5,15,0,0,115,29,1,0,0,0,116,117,
+      7,0,0,0,117,31,1,0,0,0,118,121,3,34,17,0,119,121,3,36,18,0,120,118,
+      1,0,0,0,120,119,1,0,0,0,121,33,1,0,0,0,122,123,5,13,0,0,123,35,1,0,
+      0,0,124,125,5,12,0,0,125,37,1,0,0,0,126,127,5,18,0,0,127,39,1,0,0,
+      0,8,43,53,58,77,90,101,108,120
   ];
 
   static final ATN _ATN =
@@ -645,6 +752,8 @@ class Squash_Context extends ParserRuleContext {
 }
 
 class LiteralContext extends ParserRuleContext {
+  RepeatsContext? repeats() => getRuleContext<RepeatsContext>(0);
+  VariationsContext? variations() => getRuleContext<VariationsContext>(0);
   NumberContext? number() => getRuleContext<NumberContext>(0);
   StringContext? string() => getRuleContext<StringContext>(0);
   NilContext? nil() => getRuleContext<NilContext>(0);
@@ -660,6 +769,55 @@ class LiteralContext extends ParserRuleContext {
   @override
   void exitRule(ParseTreeListener listener) {
     if (listener is solfaListener) listener.exitLiteral(this);
+  }
+}
+
+class RepeatsContext extends ParserRuleContext {
+  TerminalNode? STAR() => getToken(solfaParser.TOKEN_STAR, 0);
+  TerminalNode? INT() => getToken(solfaParser.TOKEN_INT, 0);
+  RepeatsContext([ParserRuleContext? parent, int? invokingState]) : super(parent, invokingState);
+  @override
+  int get ruleIndex => RULE_repeats;
+  @override
+  void enterRule(ParseTreeListener listener) {
+    if (listener is solfaListener) listener.enterRepeats(this);
+  }
+  @override
+  void exitRule(ParseTreeListener listener) {
+    if (listener is solfaListener) listener.exitRepeats(this);
+  }
+}
+
+class VariationsContext extends ParserRuleContext {
+  TerminalNode? COLON() => getToken(solfaParser.TOKEN_COLON, 0);
+  List<A_variationContext> a_variations() => getRuleContexts<A_variationContext>();
+  A_variationContext? a_variation(int i) => getRuleContext<A_variationContext>(i);
+  VariationsContext([ParserRuleContext? parent, int? invokingState]) : super(parent, invokingState);
+  @override
+  int get ruleIndex => RULE_variations;
+  @override
+  void enterRule(ParseTreeListener listener) {
+    if (listener is solfaListener) listener.enterVariations(this);
+  }
+  @override
+  void exitRule(ParseTreeListener listener) {
+    if (listener is solfaListener) listener.exitVariations(this);
+  }
+}
+
+class A_variationContext extends ParserRuleContext {
+  List<TerminalNode> INTs() => getTokens(solfaParser.TOKEN_INT);
+  TerminalNode? INT(int i) => getToken(solfaParser.TOKEN_INT, i);
+  A_variationContext([ParserRuleContext? parent, int? invokingState]) : super(parent, invokingState);
+  @override
+  int get ruleIndex => RULE_a_variation;
+  @override
+  void enterRule(ParseTreeListener listener) {
+    if (listener is solfaListener) listener.enterA_variation(this);
+  }
+  @override
+  void exitRule(ParseTreeListener listener) {
+    if (listener is solfaListener) listener.exitA_variation(this);
   }
 }
 

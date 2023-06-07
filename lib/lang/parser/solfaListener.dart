@@ -71,6 +71,27 @@ abstract class solfaListener extends ParseTreeListener {
   /// [ctx] the parse tree
   void exitLiteral(LiteralContext ctx);
 
+  /// Enter a parse tree produced by [solfaParser.repeats].
+  /// [ctx] the parse tree
+  void enterRepeats(RepeatsContext ctx);
+  /// Exit a parse tree produced by [solfaParser.repeats].
+  /// [ctx] the parse tree
+  void exitRepeats(RepeatsContext ctx);
+
+  /// Enter a parse tree produced by [solfaParser.variations].
+  /// [ctx] the parse tree
+  void enterVariations(VariationsContext ctx);
+  /// Exit a parse tree produced by [solfaParser.variations].
+  /// [ctx] the parse tree
+  void exitVariations(VariationsContext ctx);
+
+  /// Enter a parse tree produced by [solfaParser.a_variation].
+  /// [ctx] the parse tree
+  void enterA_variation(A_variationContext ctx);
+  /// Exit a parse tree produced by [solfaParser.a_variation].
+  /// [ctx] the parse tree
+  void exitA_variation(A_variationContext ctx);
+
   /// Enter a parse tree produced by [solfaParser.string].
   /// [ctx] the parse tree
   void enterString(StringContext ctx);

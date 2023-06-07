@@ -28,15 +28,28 @@ squash : squash_ duration
 squash_ : '{' forms '}' ;
 
 literal
-     : number
+     : repeats
+     | variations
+     | number
      | string
      | nil
      | boolean
      | symbol_like
      ;
 
+repeats : '*' INT ;
+
+variations : ':' a_variation (',' a_variation)* ;
+
+a_variation
+ : INT
+ | INT '-' INT
+ ;
+
 string : STRING ;
+
 nil : NIL ;
+
 boolean : BOOLEAN ;
 
 duration : DOTTED | INT ;
@@ -67,12 +80,16 @@ NIL : 'nil' ;
 
 BOOLEAN: 'true' | 'false' ;
 
+STAR : '*';
+
+COLON : ':';
+
 SYMBOL_LIKE : [a-zA-Z<>!=@%\-+\\/?*] [a-zA-Z0-9_\-+.~=!\\/?*]* ;
 
 TRASH : ( WS | COMMENT ) -> skip ;
 
 fragment
-WS : [ \n\r\t,] ;
+WS : [ \n\r\t,|] ;
 
 fragment
 COMMENT: ';' ~[\r\n]* ;
